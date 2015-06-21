@@ -306,7 +306,7 @@
 
         var getWilayahDropdown = function ($http, $scope, filter, callback, levelName) {
             itemyangsedangdiproses.setWilayah(true);
-            $http.get('/wilayah/2014/' + filter).success(function (data) {
+            $http.get('/wilayah/2015/' + filter).success(function (data) {
                 callback(data, levelName);
                 itemyangsedangdiproses.setWilayah(false);
             }).error(function (data) {

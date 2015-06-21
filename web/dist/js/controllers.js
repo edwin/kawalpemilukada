@@ -93,7 +93,7 @@
                 $KawalService.getWilayahDropdown($http, this, "0", callback, "provinsis");
                 $KawalService.itemyangsedangdiproses.setKandidat(true);
                 var context = this;
-                $http.get('/kandidat/get/2014/' + this.kandidat.tingkat).
+                $http.get('/kandidat/get/' + $scope.$parent.$parent.$tahun + '/' + this.kandidat.tingkat).
                         success(function (data, status, headers, config) {
                             if (data.length > 0) {
                                 context.wilayahs = data[0];
@@ -128,7 +128,7 @@
                 }
                 $KawalService.itemyangsedangdiproses.setKandidat(true);
                 selected.submitShow = false;
-                $http.post('/kandidat/post/2014/' + selected.kandidat.tingkat + '/' + selected.kandidat.tingkatId, selected.kandidat).
+                $http.post('/kandidat/post/' + $scope.$parent.$parent.$tahun + '/' + selected.kandidat.tingkat + '/' + selected.kandidat.tingkatId, selected.kandidat).
                         success(function (data, status, headers, config) {
                             if (data.length > 0) {
                                 selected.wilayahs = data[0];
