@@ -6,8 +6,6 @@
 package org.kawalpemilukada.web.controller;
 
 import com.google.gson.Gson;
-import static com.googlecode.objectify.ObjectifyService.ofy;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -16,15 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
 import org.kawalpemilukada.model.Dashboard;
-import org.kawalpemilukada.model.Kandidat;
-import org.kawalpemilukada.model.KandidatWilayah;
 import org.kawalpemilukada.model.UserData;
 import org.kawalpemilukada.model.Wilayah;
-import static org.kawalpemilukada.web.controller.CommonServices.setParentId;
 
 /**
  *

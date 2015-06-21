@@ -57,7 +57,7 @@ public class login extends HttpServlet {
                 tahun = "";
             }
             Facebook facebook = new FacebookFactory().getInstance();
-            request.getSession().setAttribute("userAccount", facebook);
+            request.getSession().setAttribute("facebook", facebook);
             request.getSession().setAttribute("tahun", tahun);
             StringBuffer callbackURL = request.getRequestURL();
             int index = callbackURL.lastIndexOf("/");
@@ -70,7 +70,7 @@ public class login extends HttpServlet {
                 tahun = "";
             }
             Twitter twitter = new TwitterFactory().getInstance();
-            request.getSession().setAttribute("userAccount", twitter);
+            request.getSession().setAttribute("twitter", twitter);
             request.getSession().setAttribute("tahun", tahun);
             String rurl = request.getParameter("rurl");
             StringBuffer callbackURL = request.getRequestURL();

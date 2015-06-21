@@ -414,32 +414,7 @@ public class CommonServices {
     }
 
     public static UserData getUser(HttpServletRequest request) {
-        UserData user = null;
-        String id = "";
-        try {
-            Facebook facebook = (Facebook) request.getSession().getAttribute("userAccount");
-            User u = facebook.getMe();
-            id = "fb" + getVal(u.getId());
-        } catch (Exception e) {
-            try {
-                Twitter twitter = (Twitter) request.getSession().getAttribute("userAccount");
-                id = "twit" + getVal(twitter.getId());
-            } catch (Exception ee) {
-                id = "";
-            }
-        }
-        if (id.length() > 0) {
-            Key<StringKey> thekey = Key.create(StringKey.class, id);
-            List<UserData> users = ofy()
-                    .load()
-                    .type(UserData.class) // We want only Greetings
-                    .ancestor(thekey) // Anyone in this book
-                    .limit(1) // Only show 5 of them.
-                    .list();
-            if (!users.isEmpty()) {
-                user = users.get(0);
-            }
-        }
+        UserData user = (UserData) request.getSession().getAttribute("userAccount");
         return user;
     }
 
@@ -467,58 +442,6 @@ public class CommonServices {
                 .type(UserData.class).keys();
         dashboard.users = query.list().size() + "";
         ofy().save().entity(dashboard).now();
-    }
-
-    public static JSONObject getUserAccount(HttpServletRequest request) {
-        JSONObject userAccount = new JSONObject();
-        try {
-            //userAccount = (JSONObject) request.getSession().getAttribute("userAccount");
-            Facebook facebook = (Facebook) request.getSession().getAttribute("userAccount");
-            User u = facebook.getMe();
-            userAccount.put("BiggerProfileImageURL", "https://graph.facebook.com/" + u.getId() + "/picture");
-            userAccount.put("first_name", u.getFirstName());
-            userAccount.put("name", u.getName());
-            userAccount.put("last_name", u.getLastName());
-            userAccount.put("timezone", u.getTimezone());
-            userAccount.put("locale", u.getLocale().toString());
-            userAccount.put("type", "fb");
-            userAccount.put("url", u.getWebsite());
-            userAccount.put("link", u.getLink().toString());
-            userAccount.put("id", u.getId());
-            userAccount.put("email", u.getEmail());
-            if (u.getLink().toString().equalsIgnoreCase("https://www.facebook.com/app_scoped_user_id/10152397276159760/")) {
-                userAccount.put("admin", "Y");
-            } else {
-                userAccount.put("admin", "N");
-            }
-
-        } catch (Exception e) {
-            try {
-                Twitter twitter = (Twitter) request.getSession().getAttribute("userAccount");
-                twitter4j.User u = twitter.showUser(twitter.getId());
-                userAccount.put("BiggerProfileImageURL", u.getBiggerProfileImageURL());
-                userAccount.put("first_name", u.getName());
-                userAccount.put("name", u.getName());
-                userAccount.put("last_name", u.getName());
-                userAccount.put("timezone", u.getTimeZone());
-                userAccount.put("locale", u.getLang());
-                userAccount.put("type", "twit");
-                userAccount.put("url", u.getURL());
-                userAccount.put("link", "https://twitter.com/" + twitter.getScreenName());
-                userAccount.put("id", Long.valueOf(twitter.getId()));
-                userAccount.put("ScreenName", twitter.getScreenName());
-                userAccount.put("email", "");
-                if (("https://twitter.com/" + twitter.getScreenName()).equalsIgnoreCase("https://twitter.com/khairulanshar")
-                        || ("https://twitter.com/" + twitter.getScreenName()).equalsIgnoreCase("https://twitter.com/KawalMenteri")) {
-                    userAccount.put("admin", "Y");
-                } else {
-                    userAccount.put("admin", "N");
-                }
-            } catch (Exception ee) {
-                userAccount = null;
-            }
-        }
-        return userAccount;
     }
 
     public static String getVal(Object u) {

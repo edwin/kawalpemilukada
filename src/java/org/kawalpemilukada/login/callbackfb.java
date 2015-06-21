@@ -41,14 +41,14 @@ public class callbackfb extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        Facebook facebook = (Facebook) request.getSession().getAttribute("userAccount");
+        Facebook facebook = (Facebook) request.getSession().getAttribute("facebook");
         String oauthCode = request.getParameter("code");
         try {
             facebook.getOAuthAccessToken(oauthCode);
         } catch (FacebookException e) {
             throw new ServletException(e);
         }
-        request.getSession().setAttribute("userAccount", facebook);
+        request.getSession().setAttribute("facebook", facebook);
         String errorMsg = "Data Anda belum terverifikasi.";
         UserData user = null;
         String tahun = (String) request.getSession().getAttribute("tahun");
@@ -86,7 +86,7 @@ public class callbackfb extends HttpServlet {
                 }
                 ofy().save().entity(user).now();
             }
-
+            request.getSession().setAttribute("userAccount", user);
         } catch (Exception e) {
             errorMsg = "callbackfb [processRequest] ==> " + e.toString();
             System.out.println("callbackfb [processRequest] ==> " + e.toString());

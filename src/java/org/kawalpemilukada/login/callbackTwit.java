@@ -41,7 +41,7 @@ public class callbackTwit extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Twitter twitter = (Twitter) request.getSession().getAttribute("userAccount");
+        Twitter twitter = (Twitter) request.getSession().getAttribute("twitter");
         RequestToken requestToken = (RequestToken) request.getSession().getAttribute("requestToken");
         String verifier = request.getParameter("oauth_verifier");
         String rurl = request.getParameter("rurl");
@@ -50,7 +50,7 @@ public class callbackTwit extends HttpServlet {
             request.getSession().removeAttribute("requestToken");
         } catch (TwitterException e) {
         }
-        request.getSession().setAttribute("userAccount", twitter);
+        request.getSession().setAttribute("twitter", twitter);
         String errorMsg = "Data Anda belum terverifikasi.";
         UserData user = null;
         String tahun = (String) request.getSession().getAttribute("tahun");
@@ -86,8 +86,9 @@ public class callbackTwit extends HttpServlet {
                 }
                 ofy().save().entity(user).now();
             }
+            request.getSession().setAttribute("userAccount", user);
         } catch (Exception e) {
-            errorMsg = "callbackfb [processRequest] ==> " + e.toString();
+            errorMsg = "callbackTwit [processRequest] ==> " + e.toString();
             System.out.println("callbackTwit [processRequest] ==> " + e.toString());
         }
         response.setContentType("text/html;charset=UTF-8");
