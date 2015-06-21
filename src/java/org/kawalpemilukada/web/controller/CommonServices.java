@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
+import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.googlecode.objectify.cmd.Query;
@@ -70,65 +71,65 @@ public class CommonServices {
     }
 
     public static void createWilayah(String[] filters) throws IOException, org.json.simple.parser.ParseException {
-        
-            String tahun = filters[0];
-            String filterby = filters[1];
-            String filename = filters[2];
-            JSONParser parser = new JSONParser();
-            Object obj = parser.parse(new FileReader("dist/data/json" + tahun + "/" + filename + ".json"));
-            JSONObject jsonObject = (JSONObject) obj;
-            String provName = jsonObject.get("text").toString();
-            String provId = jsonObject.get("value").toString();
-            JSONArray Kabupaten = (JSONArray) jsonObject.get("Kabupaten/Kota");
 
-            Wilayah wilayah = new Wilayah(setParentId(tahun, "0"));
-            wilayah.id = CommonServices.tingkat1 + provId;
-            wilayah.kpuid = provId;
-            wilayah.nama = provName;
-            wilayah.tingkat = CommonServices.tingkat1;
+        String tahun = filters[0];
+        String filterby = filters[1];
+        String filename = filters[2];
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader("dist/data/json" + tahun + "/" + filename + ".json"));
+        JSONObject jsonObject = (JSONObject) obj;
+        String provName = jsonObject.get("text").toString();
+        String provId = jsonObject.get("value").toString();
+        JSONArray Kabupaten = (JSONArray) jsonObject.get("Kabupaten/Kota");
+
+        Wilayah wilayah = new Wilayah(setParentId(tahun, "0"));
+        wilayah.id = CommonServices.tingkat1 + provId;
+        wilayah.kpuid = provId;
+        wilayah.nama = provName;
+        wilayah.tingkat = CommonServices.tingkat1;
+        ofy().save().entity(wilayah).now();
+
+        for (int i = 0; i < Kabupaten.size(); i++) {
+            JSONObject kabupatenObject = (JSONObject) Kabupaten.get(i);
+            String kabName = kabupatenObject.get("text").toString();
+            String kabId = kabupatenObject.get("value").toString();
+            JSONArray Kecamatan = (JSONArray) kabupatenObject.get("Kecamatan");
+
+            wilayah = new Wilayah(setParentId(tahun, provId));
+            wilayah.id = CommonServices.tingkat2 + kabId;
+            wilayah.kpuid = kabId;
+            wilayah.nama = kabName;
+            wilayah.tingkat = CommonServices.tingkat2;
             ofy().save().entity(wilayah).now();
 
-            for (int i = 0; i < Kabupaten.size(); i++) {
-                JSONObject kabupatenObject = (JSONObject) Kabupaten.get(i);
-                String kabName = kabupatenObject.get("text").toString();
-                String kabId = kabupatenObject.get("value").toString();
-                JSONArray Kecamatan = (JSONArray) kabupatenObject.get("Kecamatan");
+            for (int ii = 0; ii < Kecamatan.size(); ii++) {
+                JSONObject kecamatanObject = (JSONObject) Kecamatan.get(ii);
+                String kecName = kecamatanObject.get("text").toString();
+                String kecId = kecamatanObject.get("value").toString();
+                JSONArray Desa = (JSONArray) kecamatanObject.get("Kelurahan/Desa");
 
-                wilayah = new Wilayah(setParentId(tahun, provId));
-                wilayah.id = CommonServices.tingkat2 + kabId;
-                wilayah.kpuid = kabId;
-                wilayah.nama = kabName;
-                wilayah.tingkat = CommonServices.tingkat2;
+                wilayah = new Wilayah(setParentId(tahun, kabId));
+                wilayah.id = CommonServices.tingkat3 + kecId;
+                wilayah.kpuid = kecId;
+                wilayah.nama = kecName;
+                wilayah.tingkat = CommonServices.tingkat3;
                 ofy().save().entity(wilayah).now();
 
-                for (int ii = 0; ii < Kecamatan.size(); ii++) {
-                    JSONObject kecamatanObject = (JSONObject) Kecamatan.get(ii);
-                    String kecName = kecamatanObject.get("text").toString();
-                    String kecId = kecamatanObject.get("value").toString();
-                    JSONArray Desa = (JSONArray) kecamatanObject.get("Kelurahan/Desa");
+                for (int iii = 0; iii < Desa.size(); iii++) {
+                    JSONObject desaObject = (JSONObject) Desa.get(iii);
+                    String desaName = desaObject.get("text").toString();
+                    String desaId = desaObject.get("value").toString();
 
-                    wilayah = new Wilayah(setParentId(tahun, kabId));
-                    wilayah.id = CommonServices.tingkat3 + kecId;
-                    wilayah.kpuid = kecId;
-                    wilayah.nama = kecName;
-                    wilayah.tingkat = CommonServices.tingkat3;
+                    wilayah = new Wilayah(setParentId(tahun, kecId));
+                    wilayah.id = CommonServices.tingkat4 + desaId;
+                    wilayah.kpuid = desaId;
+                    wilayah.nama = desaName;
+                    wilayah.tingkat = CommonServices.tingkat4;
                     ofy().save().entity(wilayah).now();
-
-                    for (int iii = 0; iii < Desa.size(); iii++) {
-                        JSONObject desaObject = (JSONObject) Desa.get(iii);
-                        String desaName = desaObject.get("text").toString();
-                        String desaId = desaObject.get("value").toString();
-
-                        wilayah = new Wilayah(setParentId(tahun, kecId));
-                        wilayah.id = CommonServices.tingkat4 + desaId;
-                        wilayah.kpuid = desaId;
-                        wilayah.nama = desaName;
-                        wilayah.tingkat = CommonServices.tingkat4;
-                        ofy().save().entity(wilayah).now();
-                    }
                 }
             }
-        
+        }
+
     }
 
     public static void createKandidat(JSONObject input, String[] filters) {
@@ -414,8 +415,24 @@ public class CommonServices {
     }
 
     public static UserData getUser(HttpServletRequest request) {
-        UserData user = (UserData) request.getSession().getAttribute("userAccount");
-        return user;
+        UserData userData = null;
+        try {
+            JSONObject user = (JSONObject) request.getSession().getAttribute("UserData");
+            if (user!=null && user.get("id").toString().length() > 0) {
+                Key<StringKey> thekey = Key.create(StringKey.class, user.get("id").toString());
+                List<UserData> users = ofy()
+                        .load()
+                        .type(UserData.class) // We want only Greetings
+                        .ancestor(thekey) // Anyone in this book
+                        .limit(1) // Only show 5 of them.
+                        .list();
+                if (!users.isEmpty()) {
+                    userData = users.get(0);
+                }
+            }
+        } catch (Exception e) {
+        }
+        return userData;
     }
 
     public static Dashboard getDashboard(String versi) {

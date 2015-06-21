@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONValue;
 import org.kawalpemilukada.model.Dashboard;
 import org.kawalpemilukada.model.StringKey;
 import org.kawalpemilukada.model.UserData;
@@ -86,7 +87,8 @@ public class callbackTwit extends HttpServlet {
                 }
                 ofy().save().entity(user).now();
             }
-            request.getSession().setAttribute("userAccount", user);
+            Gson gson = new Gson();
+            request.getSession().setAttribute("UserData", JSONValue.parse(gson.toJson(user)));
         } catch (Exception e) {
             errorMsg = "callbackTwit [processRequest] ==> " + e.toString();
             System.out.println("callbackTwit [processRequest] ==> " + e.toString());

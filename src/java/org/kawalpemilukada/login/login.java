@@ -93,9 +93,7 @@ public class login extends HttpServlet {
             if (user == null) {
                 record.put("status", "belum login");
             } else {
-                Type userDataType = new TypeToken<UserData>() {
-                }.getType();
-                record.put("user", JSONValue.parse(gson.toJson(user, userDataType)));
+                record.put("user", JSONValue.parse(gson.toJson(user)));
                 if (user.terverifikasi.equalsIgnoreCase("Y")) {
                     record.put("status", "terverifikasi");
                 } else {
