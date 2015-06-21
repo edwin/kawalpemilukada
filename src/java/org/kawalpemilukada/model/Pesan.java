@@ -14,7 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.kawalpemilukada.web.controller.getData;
+import org.kawalpemilukada.web.controller.CommonServices;
 
 /**
  *
@@ -44,7 +44,7 @@ public class Pesan {
     public int jumlahTanggapan;
 
     public Pesan() throws ParseException {
-        this.creationDate = getData.JakartaTime();
+        this.creationDate = CommonServices.JakartaTime();
         this.punyaReply = false;
         this.jumlahSetuju = 0;
         this.jumlahTidakSetuju = 0;

@@ -63,50 +63,7 @@ public class getModelData extends HttpServlet {
             if (tahun == null) {
                 tahun = "";
             }
-            Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
-            if (dashboard.provinsi.equalsIgnoreCase("0")) {
-                getData.loadProvisnsi(dashboard, tahun);
-            }
-            if (dashboard.kabupaten.equalsIgnoreCase("0")) {
-                getData.loadKabupaten(dashboard, tahun);
-            }
-            record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
-        }
-        if (form_action.equalsIgnoreCase("setKecamatan")) {
-            String tahun = request.getParameter("tahun");
-            if (tahun == null) {
-                tahun = "";
-            }
-            Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
-            if (dashboard.kecamatan.equalsIgnoreCase("0")) {
-                getData.loadKecamatan(request, dashboard, tahun);
-            }
-            record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
-        }
-        if (form_action.equalsIgnoreCase("setKelurahan")) {
-            String tahun = request.getParameter("tahun");
-            if (tahun == null) {
-                tahun = "";
-            }
-            Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
-            if (dashboard.desa.equalsIgnoreCase("0")) {
-                getData.loadDesa(request, dashboard, tahun);
-            }
-            record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
-        }
-        if (form_action.equalsIgnoreCase("setTPS")) {
-            String tahun = request.getParameter("tahun");
-            if (tahun == null) {
-                tahun = "";
-            }
-            String no = request.getParameter("no");
-            if (no == null) {
-                no = "";
-            }
-            Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
-            //if (dashboard.TPS.equalsIgnoreCase("0")) {
-            getData.loadTPS(request, dashboard, tahun, "-" + no);
-            //}
+            Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
             record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
         }
         if (form_action.equalsIgnoreCase("getNumberUser")) {
@@ -114,44 +71,13 @@ public class getModelData extends HttpServlet {
             if (tahun == null) {
                 tahun = "";
             }
-            UserData user = getData.getUser(request);
+            UserData user = CommonServices.getUser(request);
             if (user.userlevel < 1000) {
                 return;
             }
-            Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
-            getData.changeDashboardUser(dashboard);
-        }
-        if (form_action.equalsIgnoreCase("getWilayah")) {
-            String tahun = request.getParameter("tahun");
-            if (tahun == null) {
-                tahun = "";
-            }
-            String filter = request.getParameter("filter");
-            if (filter == null) {
-                filter = "";
-            }
-            if (filter.equalsIgnoreCase("")) {
-                filter = "-1";
-            }
-            String filters = request.getParameter("filters");
-            if (filter == null) {
-                filter = "";
-            }
-            String[] filterxs = filters.split("/");
-            JSONArray wilayahControl = new JSONArray();
-            String parentId = "";
-            for (String filterx : filterxs) {
-                if ((!filterx.equalsIgnoreCase("wilayah.html")) && (!filterx.equalsIgnoreCase("-1"))) {
-                    parentId = filterx;
-                    List<Wilayah> wilayahx = getData.filterWilayah(parentId, tahun, filterx, "kpuid");
-                    wilayahControl.add(JSONValue.parse(gson.toJson(wilayahx)));
-
-                }
-            }
-            record.put("wilayahControl", wilayahControl);
-            List<Wilayah> wilayah = getData.filterWilayah(filter, tahun, "", "");
-            record.put("wilayah", JSONValue.parse(gson.toJson(wilayah)));
-
+            Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
+            CommonServices.changeDashboardUser(dashboard);
+            record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
         }
         if (form_action.equalsIgnoreCase("updateUser")) {
             StringBuffer sb = new StringBuffer();
@@ -162,7 +88,7 @@ public class getModelData extends HttpServlet {
             }
             JSONObject input = (JSONObject) JSONValue.parse(sb.toString());
             try {
-                UserData user = getData.getUser(request);
+                UserData user = CommonServices.getUser(request);
                 if (user.id.length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
                     if (input.get("id").toString().equalsIgnoreCase(user.id)) {
                         if (input.get("kabkota").toString().length() > 0) {
@@ -217,7 +143,7 @@ public class getModelData extends HttpServlet {
             }
             JSONArray input = (JSONArray) JSONValue.parse(sb.toString());
             try {
-                UserData user = getData.getUser(request);
+                UserData user = CommonServices.getUser(request);
                 if (user.id.length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
                     String key = input.get(0).toString();
                     if (key.equalsIgnoreCase("Pesan Untuk Semua")) {
@@ -231,7 +157,7 @@ public class getModelData extends HttpServlet {
                         pesan.id = user.uid;//Long.parseLong(user.id.replace(user.type, ""));
                         pesan.setujutidaksetuju = input.get(5).toString();
                     } else {
-                        getData.addPoinToUser(user, 10);
+                        CommonServices.addPoinToUser(user, 10);
                         record.put("user", JSONValue.parse(gson.toJson(user)));
                     }
                     pesan.dari_nama = user.nama;
@@ -313,7 +239,7 @@ public class getModelData extends HttpServlet {
                     key = "wall";
                 } else if (key.equalsIgnoreCase("Pesan Untuk Saya")) {
                     try {
-                        UserData user = getData.getUser(request);
+                        UserData user = CommonServices.getUser(request);
                         key = "msg" + user.id;
                     } catch (Exception e) {
                         key = "wall";
@@ -330,7 +256,7 @@ public class getModelData extends HttpServlet {
                 if (offset < 0) {
                     offset = 0;
                 }
-                Query<Pesan> pesan = getData.getPesan(key, filter, filterBy, cursorStr, offset, limit);
+                Query<Pesan> pesan = CommonServices.getPesan(key, filter, filterBy, cursorStr, offset, limit);
                 //record.put("cursorStr", query.iterator().getCursor().toWebSafeString());
                 record.put("cursorStr", "");
                 if (input.get(0).toString().equalsIgnoreCase("Pesan Untuk Semua")) {

@@ -321,27 +321,10 @@
                 $scope.$parent.$parent.$tahun = selected.tahun;
                 $KawalService.getDashboard($http, $scope);
             };
-            this.setKecamatan = function () {
+            this.getUser = function () {
                 if ($scope.user.userlevel >= 1000) {
-                    $scope.panelproprerty.kecamatan = "...";
-                    $KawalService.setKecamatan($http, $scope);
-                }
-            };
-            this.setKelurahan = function () {
-                if ($scope.user.userlevel >= 1000) {
-                    $scope.panelproprerty.desa = "...";
-                    $KawalService.setKelurahan($http, $scope);
-                }
-            };
-            this.noTps = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-            this.setTPS = function () {
-                if ($scope.user.userlevel >= 1000) {
-                    $scope.panelproprerty.TPS = "...";
-                    $KawalService.alltps = [];
-                    //$KawalService.setTPS($http, $scope, $scope.user.nokontak);
-                    angular.forEach(this.noTps, function (value, key) {
-                        $KawalService.setTPS($http, $scope, value);
-                    });
+                    $scope.panelproprerty.users = "...";
+                    $KawalService.getUser($http, $scope);
                 }
             };
             $KawalService.getDashboard($http, $scope);

@@ -5,13 +5,12 @@
  */
 package org.kawalpemilukada.login;
 
-import org.kawalpemilukada.web.controller.getData;
+import org.kawalpemilukada.web.controller.CommonServices;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
 import facebook4j.Facebook;
 import facebook4j.FacebookFactory;
-import facebook4j.conf.ConfigurationBuilder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -87,7 +86,7 @@ public class login extends HttpServlet {
             }
         }
         if (form_action.equalsIgnoreCase("cekauth")) {
-            UserData user = getData.getUser(request);
+            UserData user = CommonServices.getUser(request);
             response.setContentType("text/html;charset=UTF-8");
             LinkedHashMap record = new LinkedHashMap();
             Gson gson = new Gson();
@@ -118,7 +117,7 @@ public class login extends HttpServlet {
             String nama = "";
             String jenis_kelamin = "";
             try {
-                JSONObject data = getData.post(null, "https://data.kpu.go.id/search.php?cmd=cari&nik=" + input.get(0).toString(), "GET");
+                JSONObject data = CommonServices.post(null, "https://data.kpu.go.id/search.php?cmd=cari&nik=" + input.get(0).toString(), "GET");
                 nama = data.get("nama").toString();
                 jenis_kelamin=  data.get("jenis_kelamin").toString();
             } catch (Exception e) {
@@ -126,7 +125,7 @@ public class login extends HttpServlet {
             }
             JSONArray matchs = new JSONArray();
             if (nama.equalsIgnoreCase(input.get(1).toString())) {
-                UserData user = getData.getUser(request);
+                UserData user = CommonServices.getUser(request);
                 double match = 0;
                 //if (data.get("nama").toString().equalsIgnoreCase(user.nama)) {
                 //match = 100;

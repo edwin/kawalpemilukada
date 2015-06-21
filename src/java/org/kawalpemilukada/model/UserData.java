@@ -12,17 +12,14 @@ import com.googlecode.objectify.annotation.Parent;
 import com.googlecode.objectify.Key;
 import java.text.ParseException;
 import java.util.Date;
-import org.kawalpemilukada.web.controller.getData;
+import org.kawalpemilukada.web.controller.CommonServices;
 
 @Entity
 public class UserData {
 
-    @Parent
-    public Key<StringKey> key;
-    @Id
-    public Long uid;
-    @Index
-    public String id;
+    @Parent public Key<StringKey> key;
+    @Id public Long uid;
+    @Index public String id;
     public String imgurl = "";
     public String nama = "";
     public String link = "";
@@ -46,7 +43,9 @@ public class UserData {
     @Index public int poin = 0;
 
     public UserData() throws ParseException {
-        this.lastlogin = getData.JakartaTime();
+        this.lastlogin = CommonServices.JakartaTime();
+        this.terverifikasi = "N";
+        this.userlevel = 0;
     }
 
     public UserData(String id) throws ParseException {

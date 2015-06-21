@@ -56,41 +56,22 @@ public class kandidat extends HttpServlet {
                 }
                 JSONObject input = (JSONObject) JSONValue.parse(sb.toString());
                 try {
-                    UserData user = getData.getUser(request);
-                    if (user.id.length() > 0) {
-                        String tingkatId = filters[3];
-                        Kandidat person = new Kandidat(getData.setParentId(tahun, tingkat + tingkatId));
-                        person.provinsiId = input.get("provinsiId").toString();
-                        person.provinsiNama = input.get("provinsi").toString();
-                        person.kabkotaId = input.get("kabupatenId").toString();
-                        person.kabkotaNama = input.get("kabupaten").toString();
-                        person.nama = input.get("nama").toString();
-                        ofy().save().entity(person).now();
-                        List<Kandidat> kandidatList = getData.filterKandidat(tahun, tingkat + tingkatId, "", "");
-                        KandidatWilayah kandidatWilayah = new KandidatWilayah(getData.setParentId(tahun, tingkat));
-                        kandidatWilayah.id = tingkat + tingkatId;
-                        kandidatWilayah.JumlahKandidat = kandidatList.size();
-                        if (tingkat.equalsIgnoreCase("Provinsi")) {
-                            kandidatWilayah.kpuid = person.provinsiId;
-                            kandidatWilayah.nama = person.provinsiNama;
-                        } else {
-                            kandidatWilayah.kpuid = person.kabkotaId;
-                            kandidatWilayah.nama = person.kabkotaNama;
-                        }
-                        ofy().save().entity(kandidatWilayah).now();
+                    UserData user = CommonServices.getUser(request);
+                    if (user.id.length() > 0 && user.userlevel >= 1000) {
+                        CommonServices.createKandidat(input, filters);
                     }
-                    List<KandidatWilayah> kandidatWilayahs = getData.filterKandidatWilayah(tahun, tingkat, "", "");
+                    List<KandidatWilayah> kandidatWilayahs = CommonServices.filterKandidatWilayah(tahun, tingkat, "", "");
                     kandidats.add(JSONValue.parse(gson.toJson(kandidatWilayahs)));
                 } catch (Exception e) {
                     System.out.println(e.toString());
                 }
             } else {
                 if (filters.length < 4) {
-                    List<KandidatWilayah> kandidatWilayahs = getData.filterKandidatWilayah(tahun, tingkat, "", "");
+                    List<KandidatWilayah> kandidatWilayahs = CommonServices.filterKandidatWilayah(tahun, tingkat, "", "");
                     kandidats.add(JSONValue.parse(gson.toJson(kandidatWilayahs)));
                 } else {
                     String tingkatId = filters[3];
-                    List<Kandidat> kandidat = getData.filterKandidat(tahun, tingkat + tingkatId, "", "");
+                    List<Kandidat> kandidat = CommonServices.filterKandidat(tahun, tingkat + tingkatId, "", "");
                     kandidats.add(JSONValue.parse(gson.toJson(kandidat)));
                 }
             }

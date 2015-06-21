@@ -263,9 +263,9 @@
                  }, 3000);*/
             });
         };
-        var setKecamatan = function ($http, $scope) {
+        var getUser = function ($http, $scope) {
             itemyangsedangdiproses.setDashboard(true);
-            $http.get('/getModelData?form_action=setKecamatan&tahun=' + $scope.$tahun).success(function (data) {
+            $http.get('/getModelData?form_action=getNumberUser&tahun=' + $scope.$tahun).success(function (data) {
                 $scope.panelproprerty = {
                     users: data.dashboard.users,
                     tasks: data.dashboard.tasks,
@@ -284,52 +284,7 @@
                  }, 3000);*/
             });
         };
-        var setKelurahan = function ($http, $scope) {
-            itemyangsedangdiproses.setDashboard(true);
-            $http.get('/getModelData?form_action=setKelurahan&tahun=' + $scope.$tahun).success(function (data) {
-                $scope.panelproprerty = {
-                    users: data.dashboard.users,
-                    tasks: data.dashboard.tasks,
-                    comments: data.dashboard.comments,
-                    kandidat: data.dashboard.kandidat,
-                    provinsi: data.dashboard.provinsi,
-                    kabupaten: data.dashboard.kabupaten,
-                    kecamatan: data.dashboard.kecamatan,
-                    desa: data.dashboard.desa,
-                    TPS: data.dashboard.TPS
-                };
-                itemyangsedangdiproses.setDashboard(false);
-            }).error(function (data) {
-                /*setTimeout(function () {
-                 location.reload()
-                 }, 3000);*/
-            });
-        };
-        var alltps = [];
-        var setTPS = function ($http, $scope, $no) {
-            itemyangsedangdiproses.setDashboard(true);
-            $http.get('/getModelData?form_action=setTPS&tahun=' + $scope.$tahun + '&no=' + $no).success(function (data) {
-                alltps.push($no);
-                if (alltps.length >= 9) {
-                    $scope.panelproprerty = {
-                        users: data.dashboard.users,
-                        tasks: data.dashboard.tasks,
-                        comments: data.dashboard.comments,
-                        kandidat: data.dashboard.kandidat,
-                        provinsi: data.dashboard.provinsi,
-                        kabupaten: data.dashboard.kabupaten,
-                        kecamatan: data.dashboard.kecamatan,
-                        desa: data.dashboard.desa,
-                        TPS: data.dashboard.TPS
-                    };
-                    itemyangsedangdiproses.setDashboard(false);
-                }
-            }).error(function (data) {
-                /*setTimeout(function () {
-                 location.reload()
-                 }, 3000);*/
-            });
-        };
+        
 
         var cekauth = function ($http, $scope) {
             itemyangsedangdiproses.setUser(true);
@@ -399,11 +354,8 @@
             , submitFile: submitFile
             , getPesans: getPesans
             , getWilayahDropdown: getWilayahDropdown
-            , setKecamatan: setKecamatan
-            , setKelurahan: setKelurahan
-            , setTPS: setTPS
+            , getUser: getUser
             , sendToGa: sendToGa
-            , alltps: alltps
         };
     });
 

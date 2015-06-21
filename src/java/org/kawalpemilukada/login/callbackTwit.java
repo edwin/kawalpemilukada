@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.kawalpemilukada.model.Dashboard;
 import org.kawalpemilukada.model.StringKey;
 import org.kawalpemilukada.model.UserData;
-import org.kawalpemilukada.web.controller.getData;
+import org.kawalpemilukada.web.controller.CommonServices;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -54,11 +54,11 @@ public class callbackTwit extends HttpServlet {
         String errorMsg = "Data Anda belum terverifikasi.";
         UserData user = null;
         String tahun = (String) request.getSession().getAttribute("tahun");
-        Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
+        Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
         request.getSession().removeAttribute("tahun");
         try {
             User u = twitter.showUser(twitter.getId());
-            Key<StringKey> thekey = Key.create(StringKey.class, "twit" + getData.getVal(u.getId()));
+            Key<StringKey> thekey = Key.create(StringKey.class, "twit" + CommonServices.getVal(u.getId()));
             List<UserData> users = ofy()
                     .load()
                     .type(UserData.class) // We want only Greetings
@@ -66,20 +66,18 @@ public class callbackTwit extends HttpServlet {
                     .limit(1) // Only show 5 of them.
                     .list();
             if (users.isEmpty()) {
-                user = new UserData("twit" + getData.getVal(twitter.getId()));
+                user = new UserData("twit" + CommonServices.getVal(twitter.getId()));
                 user.imgurl = u.getBiggerProfileImageURL().replace("http://", "https://");
-                user.nama = getData.getVal(u.getName());
-                user.link = "https://twitter.com/" + getData.getVal(twitter.getScreenName());
+                user.nama = CommonServices.getVal(u.getName());
+                user.link = "https://twitter.com/" + CommonServices.getVal(twitter.getScreenName());
                 user.email = "";
-                user.terverifikasi = "N";
                 user.type = "twit";
-                user.userlevel = 0;
                 ofy().save().entity(user).now();
-                getData.changeDashboardUser(dashboard);
+                CommonServices.changeDashboardUser(dashboard);
             } else {
                 user = users.get(0);
-                if (user.type.equalsIgnoreCase("twit") && user.nama.equalsIgnoreCase(getData.getVal(u.getName()))) {
-                    user.lastlogin = getData.JakartaTime();
+                if (user.type.equalsIgnoreCase("twit") && user.nama.equalsIgnoreCase(CommonServices.getVal(u.getName()))) {
+                    user.lastlogin = CommonServices.JakartaTime();
                     user.type = "twit";
                     user.imgurl = u.getBiggerProfileImageURL().replace("http://", "https://");
                     if (user.terverifikasi.equalsIgnoreCase("Y")) {

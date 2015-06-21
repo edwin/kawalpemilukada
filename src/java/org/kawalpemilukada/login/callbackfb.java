@@ -5,7 +5,7 @@
  */
 package org.kawalpemilukada.login;
 
-import org.kawalpemilukada.web.controller.getData;
+import org.kawalpemilukada.web.controller.CommonServices;
 //import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
@@ -52,11 +52,11 @@ public class callbackfb extends HttpServlet {
         String errorMsg = "Data Anda belum terverifikasi.";
         UserData user = null;
         String tahun = (String) request.getSession().getAttribute("tahun");
-        Dashboard dashboard = getData.getDashboard(getData.setParentId(tahun, "0"));
+        Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
         request.getSession().removeAttribute("tahun");
         try {
             facebook4j.User u = facebook.getMe();
-            Key<StringKey> thekey = Key.create(StringKey.class, "fb" + getData.getVal(u.getId()));
+            Key<StringKey> thekey = Key.create(StringKey.class, "fb" + CommonServices.getVal(u.getId()));
             List<UserData> users = ofy()
                     .load()
                     .type(UserData.class) // We want only Greetings
@@ -64,20 +64,18 @@ public class callbackfb extends HttpServlet {
                     .limit(1) // Only show 5 of them.
                     .list();
             if (users.isEmpty()) {
-                user = new UserData("fb" + getData.getVal(u.getId()));
+                user = new UserData("fb" + CommonServices.getVal(u.getId()));
                 user.imgurl = "https://graph.facebook.com/" + u.getId() + "/picture";
-                user.nama = getData.getVal(u.getName());
-                user.link = getData.getVal(u.getLink());
-                user.email = getData.getVal(u.getEmail());
-                user.terverifikasi = "N";
+                user.nama = CommonServices.getVal(u.getName());
+                user.link = CommonServices.getVal(u.getLink());
+                user.email = CommonServices.getVal(u.getEmail());
                 user.type = "fb";
-                user.userlevel = 0;
                 ofy().save().entity(user).now();
-                getData.changeDashboardUser(dashboard);
+                CommonServices.changeDashboardUser(dashboard);
             } else {
                 user = users.get(0);
-                if (user.type.equalsIgnoreCase("fb") && user.nama.equalsIgnoreCase(getData.getVal(u.getName()))) {
-                    user.lastlogin = getData.JakartaTime();
+                if (user.type.equalsIgnoreCase("fb") && user.nama.equalsIgnoreCase(CommonServices.getVal(u.getName()))) {
+                    user.lastlogin = CommonServices.JakartaTime();
                     user.type = "fb";
                     user.imgurl = "https://graph.facebook.com/" + u.getId() + "/picture";
                     if (user.terverifikasi.equalsIgnoreCase("Y")) {
