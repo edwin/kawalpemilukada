@@ -1,71 +1,80 @@
 
 <div class="sidebar-nav navbar-collapse">
     <ul class="nav" id="side-menu">
-        <li class="sidebar-search">
-            <div class="input-group custom-search-form">
+        <li class="sidebar-search" Style="text-align: center;">
+            <!--<div class="input-group custom-search-form">
                 <input type="text" class="form-control" placeholder="Search...">
                 <span class="input-group-btn">
                     <button class="btn btn-bluex" type="button">
                         <i class="fa fa-search"></i>
                     </button>
                 </span>
-            </div>
-            <!-- /input-group -->
+            </div>-->
+            <button class="btn btn-bluex" type="button" ng-click="mainSide.hideMenu()">Sembunyikan Menu</button>
+        </li>
+        <li ng-class="{active : mainSide.isSelected2('#/tabulasi.html')}">
+            <a href="javascript:" class="hasChild"><i class="fa fa-table fa-fw"></i> Tabulasi Suara<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level" ng-class="{in : mainSide.isSelected2('#/tabulasi.html')}">
+                <li>
+                    <a href="javascript:"  ng-click="mainSide.setPage('#/tabulasi.html?Provinsi')" ng-class="{active : mainSide.isSelected2('#/tabulasi.html/Provinsi')}">Kepala Daerah Provinsi</a>
+                </li>
+                <li>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/tabulasi.html?Kabupaten-Kota')" ng-class="{active : mainSide.isSelected2('#/tabulasi.html/Kabupaten-Kota')}">Kepala Daerah Kabupaten/ Kota</a>
+                </li>
+            </ul>
+        </li>
+        <li ng-class="{active : mainSide.isSelected2('#/kandidat.html')}" ng-show="isAdmin(user)">
+            <a href="javascript:" class="hasChild"><i class="fa fa-users fa-fw"></i> Pasangan Kandidat<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level" ng-class="{in : mainSide.isSelected2('#/kandidat.html')}">
+                <li>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/kandidat.html?Provinsi')" ng-class="{active : mainSide.isSelected2('#/kandidat.html/Provinsi')}">Kepala Daerah Provinsi</a>
+                </li>
+                <li>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/kandidat.html?Kabupaten-Kota')" ng-class="{active : mainSide.isSelected2('#/kandidat.html/Kabupaten-Kota')}">Kepala Daerah Kabupaten/ Kota</a>
+                </li>
+            </ul>
         </li>
         <li>
             <a href="javascript:" ng-click="mainSide.setPage('#/dashboard.html')" ng-class="{active : mainSide.isSelected('#/dashboard.html')}"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a>
         </li>
+        
         <li>
-            <a href="javascript:" ng-click="mainSide.setPage('#/user-profile.html')" ng-class="{active : mainSide.isSelected('#/user-profile.html')}"><i class="fa fa-pencil-square-o"></i> Mendaftar Menjadi Relawan</a>
+            <a href="javascript:" ng-click="mainSide.setPage('#/user-profile.html')" ng-class="{active : mainSide.isSelected('#/user-profile.html')}"><i class="fa fa-pencil-square-o"></i> Pendaftaran</a>
         </li>
-        <li>
-            <a href="javascript:" ng-click="mainSide.setPage('#/wilayah.html/0')" ng-class="{active : mainSide.isSelected('#/wilayah.html/0')}"><i class="fa fa-globe fa-fw"></i> Wilayah Administrasi</a>
-        </li>
-        <li>
-            <a href="javascript:" class="hasChild"><i class="fa fa-users fa-fw"></i> Kandidat<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
+        <!--<li ng-class="{active : mainSide.isSelected2('#/task.html')}">
+            <a href="javascript:" class="hasChild"><i class="fa fa-tasks fa-fw"></i> Mengisi/ Memverifikasi Data Suara<span class="fa arrow"></span></a>
+            <ul class="nav nav-second-level" ng-class="{in : mainSide.isSelected2('#/task.html')}">
                 <li>
-                    <a href="javascript:" ng-click="mainSide.setPage('#/kandidat.html?Provinsi')" ng-class="{active : mainSide.isSelected('#/kandidat.html/Provinsi')}">Kepala Daerah Provinsi</a>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/task.html?Provinsi')" ng-class="{active : mainSide.isSelected2('#/task.html/Provinsi')}">Kepala Daerah Provinsi</a>
                 </li>
                 <li>
-                    <a href="javascript:" ng-click="mainSide.setPage('#/kandidat.html?KabupatenKota')" ng-class="{active : mainSide.isSelected('#/kandidat.html/KabupatenKota')}">Kepala Daerah Kabupaten/ Kota</a>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/task.html?Kabupaten-Kota')" ng-class="{active : mainSide.isSelected2('#/task.html/Kabupaten-Kota')}">Kepala Daerah Kabupaten/ Kota</a>
                 </li>
             </ul>
-            <!-- /.nav-second-level -->
-        </li>
-        <li>
-            <a href="javascript:" class="hasChild"><i class="fa fa-table fa-fw"></i> Tabulasi Suara<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
-                <li>
-                    <a href="javascript:" ng-click="mainSide.setPage('#/tabulasi.html?Provinsi')" ng-class="{active : mainSide.isSelected('#/tabulasi.html/Provinsi')}">Kepala Daerah Provinsi</a>
-                </li>
-                <li>
-                    <a href="javascript:" ng-click="mainSide.setPage('#/tabulasi.html?KabupatenKota')" ng-class="{active : mainSide.isSelected('#/tabulasi.html/KabupatenKota')}">Kepala Daerah Kabupaten/ Kota</a>
-                </li>
-            </ul>
-            <!-- /.nav-second-level -->
-        </li>
-        <li>
+            
+        </li>   -->
+        
+        
+        <!--<li ng-class="{active : mainSide.isSelected2('#/grafik.html')}">
             <a href="javascript:" class="hasChild"><i class="fa fa-bar-chart-o fa-fw"></i> Grafik Suara<span class="fa arrow"></span></a>
-            <ul class="nav nav-second-level">
+            <ul class="nav nav-second-level" ng-class="{in : mainSide.isSelected2('#/grafik.html')}">
                 <li>
                     <a href="javascript:" ng-click="mainSide.setPage('#/grafik.html?Provinsi')" ng-class="{active : mainSide.isSelected('#/grafik.html/Provinsi')}">Kepala Daerah Provinsi</a>
                 </li>
                 <li>
-                    <a href="javascript:" ng-click="mainSide.setPage('#/grafik.html?KabupatenKota')" ng-class="{active : mainSide.isSelected('#/grafik.html/KabupatenKota')}">Kepala Daerah Kabupaten/ Kota</a>
+                    <a href="javascript:" ng-click="mainSide.setPage('#/grafik.html?Kabupaten-Kota')" ng-class="{active : mainSide.isSelected('#/grafik.html/Kabupaten-Kota')}">Kepala Daerah Kabupaten/ Kota</a>
                 </li>
             </ul>
-            <!-- /.nav-second-level -->
-        </li>
-        <li>
-            <a href="javascript:" ng-click="mainSide.setPage('#/task.html')" ng-class="{active : mainSide.isSelected('#/task.html')}"><i class="fa fa-tasks fa-fw"></i> Tugas Saya</a>
-        </li>
+        </li>-->
         <li>
             <a href="javascript:" ng-click="mainSide.setPage('#/komentar.html')" ng-class="{active : mainSide.isSelected('#/komentar.html')}"><i class="fa fa-comments-o fa-fw"></i> Media Komunikasi</a>
         </li>
 
-        <li>
+        <!--<li>
             <a href="javascript:" ng-click="mainSide.setPage('#/users.html')" ng-class="{active : mainSide.isSelected('#/users.html')}"><i class="fa fa-user fa-fw"></i> Daftar Pengguna</a>
+        </li>-->
+        <li>
+            <a href="javascript:" ng-click="mainSide.setPage('#/wilayah.html')" ng-class="{active : mainSide.isSelected2('#/wilayah.html')}"><i class="fa fa-globe fa-fw"></i> Wilayah Administrasi</a>
         </li>
         <li>
             <a href="javascript:" ng-click="mainSide.setPage('#/privasi.html')" ng-class="{active : mainSide.isSelected('#/privasi.html')}"><i class="fa fa-shield fa-fw"></i> Privasi Dan Kebijakan</a>

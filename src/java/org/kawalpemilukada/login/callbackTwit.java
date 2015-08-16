@@ -6,18 +6,15 @@
 package org.kawalpemilukada.login;
 
 import com.google.gson.Gson;
-import com.googlecode.objectify.Key;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONValue;
 import org.kawalpemilukada.model.Dashboard;
-import org.kawalpemilukada.model.StringKey;
 import org.kawalpemilukada.model.UserData;
 import org.kawalpemilukada.web.controller.CommonServices;
 import twitter4j.Twitter;
@@ -53,20 +50,14 @@ public class callbackTwit extends HttpServlet {
         }
         request.getSession().setAttribute("twitter", twitter);
         String errorMsg = "Data Anda belum terverifikasi.";
-        UserData user = null;
         String tahun = (String) request.getSession().getAttribute("tahun");
         Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
         request.getSession().removeAttribute("tahun");
+        UserData user = null;
         try {
             User u = twitter.showUser(twitter.getId());
-            Key<StringKey> thekey = Key.create(StringKey.class, "twit" + CommonServices.getVal(u.getId()));
-            List<UserData> users = ofy()
-                    .load()
-                    .type(UserData.class) // We want only Greetings
-                    .ancestor(thekey) // Anyone in this book
-                    .limit(1) // Only show 5 of them.
-                    .list();
-            if (users.isEmpty()) {
+            user = ofy().load().type(UserData.class).id("twit" + CommonServices.getVal(twitter.getId())).now();
+            if (user==null) {
                 user = new UserData("twit" + CommonServices.getVal(twitter.getId()));
                 user.imgurl = u.getBiggerProfileImageURL().replace("http://", "https://");
                 user.nama = CommonServices.getVal(u.getName());
@@ -74,9 +65,9 @@ public class callbackTwit extends HttpServlet {
                 user.email = "";
                 user.type = "twit";
                 ofy().save().entity(user).now();
-                CommonServices.changeDashboardUser(dashboard);
+                dashboard.users = CommonServices.getuserSize() + "";
+                ofy().save().entity(dashboard).now();
             } else {
-                user = users.get(0);
                 if (user.type.equalsIgnoreCase("twit") && user.nama.equalsIgnoreCase(CommonServices.getVal(u.getName()))) {
                     user.lastlogin = CommonServices.JakartaTime();
                     user.type = "twit";

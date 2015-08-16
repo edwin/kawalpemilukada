@@ -171,6 +171,8 @@
 .timeline-body > p,
 .timeline-body > ul {
     margin-bottom: 0;
+    word-wrap: break-word;
+    word-break: normal; 
 }
 
 .timeline-body > p + p {
@@ -181,6 +183,12 @@
     display: inline-block;
     float: right;
     padding-bottom: 10px;
+}
+
+.time-text-center{
+    margin-left: -15px;
+    font-size: 7pt;
+    width: 80px;
 }
 
 @media(max-width:767px) {

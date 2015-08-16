@@ -30,7 +30,7 @@
         <div class="col-lg-12">
             <div class="panel panel-default panel-black">
                 <div class="panel-heading">
-                    <nav ng-repeat="controlWilayah in wilCtrl.controlWilayahs"> 
+                    <nav ng-repeat="controlWilayah in wilCtrl.controlWilayahs | orderBy :'id'"> 
                         <i class="fa fa-angle-double-right" ng-show="controlWilayah.showdiv" style="padding-left:15px;"></i>
                         <div ng-click="wilCtrl.setPage(controlWilayah, $index)" class="heading-content">{{controlWilayah.nama}}</div>
                     </nav>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="panel-footer">
-                    <nav ng-repeat="controlWilayah in wilCtrl.controlWilayahs"> 
+                    <nav ng-repeat="controlWilayah in wilCtrl.controlWilayahs | orderBy :'id'">  
                         <i class="fa fa-angle-double-right" ng-show="controlWilayah.showdiv" style="padding-left:15px;"></i>
                         <div ng-click="wilCtrl.setPage(controlWilayah, $index)" class="heading-content">{{controlWilayah.nama}}</div>
                     </nav>

@@ -11,13 +11,10 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.QueryResultList;
-import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
 import static com.googlecode.objectify.ObjectifyService.ofy;
 import com.googlecode.objectify.cmd.Query;
 import com.googlecode.objectify.cmd.QueryKeys;
-import facebook4j.Facebook;
-import facebook4j.User;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
@@ -29,8 +26,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import org.json.simple.JSONArray;
@@ -38,13 +37,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.kawalpemilukada.model.Dashboard;
-import org.kawalpemilukada.model.Kandidat;
+import org.kawalpemilukada.model.DataSuara;
 import org.kawalpemilukada.model.KandidatWilayah;
 import org.kawalpemilukada.model.Pesan;
 import org.kawalpemilukada.model.StringKey;
+import org.kawalpemilukada.model.SuaraKandidat;
 import org.kawalpemilukada.model.UserData;
 import org.kawalpemilukada.model.Wilayah;
-import twitter4j.Twitter;
 
 /**
  *
@@ -55,9 +54,22 @@ public class CommonServices {
     public static final String version = "1";
     public static final String delimeter = "#";
 
-    public static String setParentId(String tahun, String parentId) {
-        return tahun + delimeter + parentId + delimeter + version;
+    public static String setParentId(String val1, String val2) {
+        return val1 + delimeter + val2 + delimeter + version;
     }
+
+    public static String setParentId0(String val1, String val2) {
+        return val1 + delimeter + val2;
+    }
+
+    public static String setParentId(String val1, String val2, String val3) {
+        return val1 + delimeter + val2 + delimeter + val3;
+    }
+
+    public static String setParentId1(String val1, String val2, String val3) {
+        return val1 + delimeter + val2 + delimeter + val3 + delimeter + version;
+    }
+
     public static String tingkat1 = "Provinsi";
     public static String tingkat2 = "Kabupaten-Kota";
     public static String tingkat3 = "Kecamatan";
@@ -67,6 +79,76 @@ public class CommonServices {
     public static void addPoinToUser(UserData user, int point) {
         user.poin = user.poin + 10;
         ofy().save().entity(user).now();
+
+    }
+
+    public static void loopUpdateparent(JSONArray wilayah, DataSuara dataSuaraTPS, String type) {
+        String[] s = dataSuaraTPS.id.split(delimeter);
+        String tingkat = s[0];
+        int last = 0;
+        if (tingkat.equalsIgnoreCase(tingkat2)) {
+            last = 1;
+        }
+        for (int wilayahi = wilayah.size() - 1; wilayahi > last; wilayahi--) {
+            JSONObject wilayahj = (JSONObject) wilayah.get(wilayahi);
+            String tahun = wilayahj.get("tahun").toString();
+            String kpuid = wilayahj.get("kpuid").toString();
+            String id = setParentId0(tingkat, wilayahj.get("tingkat").toString() + kpuid);
+            JSONObject key = (JSONObject) wilayahj.get("key");
+            JSONObject raw = (JSONObject) key.get("raw");
+            Key<StringKey> key0 = Key.create(StringKey.class, setParentId0(tingkat, raw.get("name").toString()));
+            Key<DataSuara> keyWithParent = Key.create(key0, DataSuara.class, id);
+            DataSuara dataSuaraparent = ofy().load().type(DataSuara.class).ancestor(keyWithParent).first().now();
+            Key<StringKey> key1 = Key.create(StringKey.class, setParentId1(tingkat, tahun, kpuid));
+            List<DataSuara> dataSuaraList = ofy().load().type(DataSuara.class).ancestor(key1).list();
+            if (type.equalsIgnoreCase("HC")) {
+                dataSuaraparent.suarasahHC = 0;
+                dataSuaraparent.suaratidaksahHC = 0;
+                dataSuaraparent.jumlahTPSdilockHC = 0;
+            } else {
+                dataSuaraparent.suarasah = 0;
+                dataSuaraparent.suaratidaksah = 0;
+                dataSuaraparent.jumlahTPSdilock = 0;
+                dataSuaraparent.jumlahTPStidakadaC1 = 0;
+                dataSuaraparent.jumlahEntryC1Salah = 0;
+            }
+            for (Integer temp : dataSuaraparent.uruts) {
+                if (type.equalsIgnoreCase("HC")) {
+                    dataSuaraparent.suaraKandidat.get(temp.toString() + "").suaraTPS = 0;
+                } else {
+                    dataSuaraparent.suaraKandidat.get(temp.toString() + "").suaraVerifikasiC1 = 0;
+                }
+            }
+            for (DataSuara d : dataSuaraList) {
+                if (!d.tingkat.equalsIgnoreCase(tingkat5)) {
+                    d.statusHC = dataSuaraTPS.statusHC;
+                    d.dilockHC = dataSuaraTPS.dilockHC;
+                    d.dilock = dataSuaraTPS.dilock;
+                }
+                if (type.equalsIgnoreCase("HC") && d.statusHC.equalsIgnoreCase("Y")) {
+                    dataSuaraparent.suarasahHC += d.suarasahHC;
+                    dataSuaraparent.suaratidaksahHC += d.suaratidaksahHC;
+                    dataSuaraparent.jumlahTPSdilockHC += d.jumlahTPSdilockHC;
+                }
+                if ((!type.equalsIgnoreCase("HC")) && d.dilock.equalsIgnoreCase("Y")) {
+                    dataSuaraparent.suarasah += d.suarasah;
+                    dataSuaraparent.suaratidaksah += d.suaratidaksah;
+                    dataSuaraparent.jumlahTPSdilock += d.jumlahTPSdilock;
+                    dataSuaraparent.jumlahTPStidakadaC1 += d.jumlahTPStidakadaC1;
+                    dataSuaraparent.jumlahEntryC1Salah += d.jumlahEntryC1Salah;
+                }
+
+                for (Integer temp : dataSuaraparent.uruts) {
+                    if (type.equalsIgnoreCase("HC") && d.statusHC.equalsIgnoreCase("Y")) {
+                        dataSuaraparent.suaraKandidat.get(temp.toString() + "").suaraTPS += d.suaraKandidat.get(temp.toString() + "").suaraTPS;
+                    }
+                    if ((!type.equalsIgnoreCase("HC")) && d.dilock.equalsIgnoreCase("Y")) {
+                        dataSuaraparent.suaraKandidat.get(temp.toString() + "").suaraVerifikasiC1 += d.suaraKandidat.get(temp.toString() + "").suaraVerifikasiC1;
+                    }
+                }
+            }
+            ofy().save().entity(dataSuaraparent).now();
+        }
 
     }
 
@@ -82,7 +164,7 @@ public class CommonServices {
         String provId = jsonObject.get("value").toString();
         JSONArray Kabupaten = (JSONArray) jsonObject.get("Kabupaten/Kota");
 
-        Wilayah wilayah = new Wilayah(setParentId(tahun, "0"));
+        Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, "0"), tahun);
         wilayah.id = CommonServices.tingkat1 + provId;
         wilayah.kpuid = provId;
         wilayah.nama = provName;
@@ -95,7 +177,7 @@ public class CommonServices {
             String kabId = kabupatenObject.get("value").toString();
             JSONArray Kecamatan = (JSONArray) kabupatenObject.get("Kecamatan");
 
-            wilayah = new Wilayah(setParentId(tahun, provId));
+            wilayah = new Wilayah(CommonServices.setParentId(tahun, provId), tahun);
             wilayah.id = CommonServices.tingkat2 + kabId;
             wilayah.kpuid = kabId;
             wilayah.nama = kabName;
@@ -108,7 +190,7 @@ public class CommonServices {
                 String kecId = kecamatanObject.get("value").toString();
                 JSONArray Desa = (JSONArray) kecamatanObject.get("Kelurahan/Desa");
 
-                wilayah = new Wilayah(setParentId(tahun, kabId));
+                wilayah = new Wilayah(CommonServices.setParentId(tahun, kabId), tahun);
                 wilayah.id = CommonServices.tingkat3 + kecId;
                 wilayah.kpuid = kecId;
                 wilayah.nama = kecName;
@@ -120,7 +202,7 @@ public class CommonServices {
                     String desaName = desaObject.get("text").toString();
                     String desaId = desaObject.get("value").toString();
 
-                    wilayah = new Wilayah(setParentId(tahun, kecId));
+                    wilayah = new Wilayah(CommonServices.setParentId(tahun, kecId), tahun);
                     wilayah.id = CommonServices.tingkat4 + desaId;
                     wilayah.kpuid = desaId;
                     wilayah.nama = desaName;
@@ -129,32 +211,48 @@ public class CommonServices {
                 }
             }
         }
-
     }
 
-    public static void createKandidat(JSONObject input, String[] filters) {
-        String tahun = filters[1];
-        String tingkat = filters[2];
-        String tingkatId = filters[3];
-        Kandidat person = new Kandidat(CommonServices.setParentId(tahun, tingkat + tingkatId));
-        person.provinsiId = input.get("provinsiId").toString();
-        person.provinsiNama = input.get("provinsi").toString();
-        person.kabkotaId = input.get("kabupatenId").toString();
-        person.kabkotaNama = input.get("kabupaten").toString();
-        person.nama = input.get("nama").toString();
-        ofy().save().entity(person).now();
-        List<Kandidat> kandidatList = CommonServices.filterKandidat(tahun, tingkat + tingkatId, "", "");
-        KandidatWilayah kandidatWilayah = new KandidatWilayah(CommonServices.setParentId(tahun, tingkat));
-        kandidatWilayah.id = tingkat + tingkatId;
-        kandidatWilayah.JumlahKandidat = kandidatList.size();
-        if (tingkat.equalsIgnoreCase("Provinsi")) {
-            kandidatWilayah.kpuid = person.provinsiId;
-            kandidatWilayah.nama = person.provinsiNama;
-        } else {
-            kandidatWilayah.kpuid = person.kabkotaId;
-            kandidatWilayah.nama = person.kabkotaNama;
+    public static void createDataSuara(Wilayah w, Map<String, SuaraKandidat> suaraKandidat, String tingkat, ArrayList<String> namas, ArrayList<Integer> uruts) throws ParseException {
+        DataSuara dataSuara = new DataSuara();
+        dataSuara.key = Key.create(StringKey.class, setParentId0(tingkat, w.key.getRaw().getName()));
+        dataSuara.tahun = w.tahun;
+        dataSuara.id = setParentId0(tingkat, w.id);
+        dataSuara.kpuid = w.kpuid;
+        dataSuara.nama = w.nama;
+        dataSuara.tingkat = w.tingkat;
+        dataSuara.suaraKandidat = suaraKandidat;
+        dataSuara.namas = namas;
+        dataSuara.uruts = uruts;
+        dataSuara.jumlahTPS = w.jumlahTPS;
+        ofy().save().entity(dataSuara).now();
+    }
+
+    public static int createDataSuaraLoop(List<Wilayah> wilayahList, Map<String, SuaraKandidat> suaraKandidat, String tingkat, ArrayList<String> namas, ArrayList<Integer> uruts) throws ParseException {
+        int jumlahTPS = 0;
+        for (Wilayah w : wilayahList) {
+            if (!w.tingkat.equalsIgnoreCase(tingkat5)) {
+                List<Wilayah> wilayah = CommonServices.filterWilayah(w.tahun, w.kpuid, "", "");
+                int jumlahTPS0 = createDataSuaraLoop(wilayah, suaraKandidat, tingkat, namas, uruts);
+                if (w.tingkat.equalsIgnoreCase(tingkat4)) {
+                    w.jumlahTPS = wilayah.size();
+                } else {
+                    w.jumlahTPS = jumlahTPS0;
+                }
+                jumlahTPS = jumlahTPS + w.jumlahTPS;
+            } else {
+                w.jumlahTPS = 1;
+            }
+
+            createDataSuara(w, suaraKandidat, tingkat, namas, uruts);
+            if (tingkat.equalsIgnoreCase(tingkat1)) {
+                w.sudahDisetup1 = "Y";
+            } else {
+                w.sudahDisetup2 = "Y";
+            }
+            ofy().save().entity(w).now();
         }
-        ofy().save().entity(kandidatWilayah).now();
+        return jumlahTPS;
     }
 
     public static void loadProvisnsi(Dashboard dashboard, String tahun) {
@@ -171,7 +269,7 @@ public class CommonServices {
                 }
                 JSONArray propinsis = (JSONArray) JSONValue.parse(sb1.toString());
                 for (int i = 0; i < propinsis.size(); i++) {
-                    Wilayah wilayah = new Wilayah(setParentId(tahun, "0"));
+                    Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, "0"), tahun);
                     JSONArray propinsi = (JSONArray) propinsis.get(i);
                     wilayah.id = CommonServices.tingkat1 + propinsi.get(1).toString();
                     wilayah.kpuid = propinsi.get(1).toString();
@@ -192,7 +290,7 @@ public class CommonServices {
                     i++;
                     try {
                         String[] kelurahan = read.split(cvsSplitBy);
-                        Wilayah wilayah = new Wilayah(setParentId(tahun, kelurahan[0]));
+                        Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, kelurahan[0]), tahun);
                         wilayah.id = CommonServices.tingkat1 + kelurahan[1];
                         wilayah.kpuid = kelurahan[1];
                         wilayah.nama = kelurahan[2].replace("\"", "");
@@ -224,7 +322,7 @@ public class CommonServices {
                 JSONArray propinsis = (JSONArray) JSONValue.parse(sb1.toString());
                 for (int i = 0; i < propinsis.size(); i++) {
                     JSONArray propinsi = (JSONArray) propinsis.get(i);
-                    Wilayah wilayah = new Wilayah(setParentId(tahun, propinsi.get(1).toString()));
+                    Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, propinsi.get(1).toString()), tahun);
                     wilayah.id = CommonServices.tingkat2 + propinsi.get(2).toString();
                     wilayah.kpuid = propinsi.get(2).toString();
                     wilayah.nama = propinsi.get(4).toString();
@@ -244,7 +342,7 @@ public class CommonServices {
                     i++;
                     try {
                         String[] kelurahan = read.split(cvsSplitBy);
-                        Wilayah wilayah = new Wilayah(setParentId(tahun, kelurahan[0]));
+                        Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, kelurahan[0]), tahun);
                         wilayah.id = CommonServices.tingkat2 + kelurahan[1];
                         wilayah.kpuid = kelurahan[1];
                         wilayah.nama = kelurahan[2].replace("\"", "");
@@ -277,7 +375,7 @@ public class CommonServices {
                 i++;
                 try {
                     String[] kelurahan = read.split(cvsSplitBy);
-                    Wilayah wilayah = new Wilayah(setParentId(tahun, kelurahan[0]));
+                    Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, kelurahan[0]), tahun);
                     wilayah.id = CommonServices.tingkat3 + kelurahan[1];
                     wilayah.kpuid = kelurahan[1];
                     wilayah.nama = kelurahan[2].replace("\"", "");
@@ -310,7 +408,7 @@ public class CommonServices {
                 i++;
                 try {
                     String[] kelurahan = read.split(cvsSplitBy);
-                    Wilayah wilayah = new Wilayah(setParentId(tahun, kelurahan[0]));
+                    Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, kelurahan[0]), tahun);
                     wilayah.id = CommonServices.tingkat4 + kelurahan[1];
                     wilayah.kpuid = kelurahan[1];
                     wilayah.nama = kelurahan[2].replace("\"", "");
@@ -343,7 +441,7 @@ public class CommonServices {
                 i++;
                 try {
                     String[] tpsline = read.split(cvsSplitBy);
-                    Wilayah wilayah = new Wilayah(setParentId(tahun, tpsline[0]));
+                    Wilayah wilayah = new Wilayah(CommonServices.setParentId(tahun, tpsline[0]), tahun);
                     wilayah.id = CommonServices.tingkat5 + tpsline[1];
                     wilayah.kpuid = tpsline[1];
                     wilayah.nama = tpsline[2].replace("\"", "");
@@ -364,7 +462,7 @@ public class CommonServices {
     }
 
     public static List<Wilayah> filterWilayah(String tahun, String parentId, String filterBy, String filter) {
-        Key<StringKey> dashKey = Key.create(StringKey.class, setParentId(tahun, parentId));
+        Key<StringKey> dashKey = Key.create(StringKey.class, CommonServices.setParentId(tahun, parentId));
         Query<Wilayah> query = ofy().load().type(Wilayah.class).ancestor(dashKey);
         if (filterBy.length() > 0 && filter.length() > 0) {
             query = query.filter(filterBy, filter);
@@ -372,17 +470,8 @@ public class CommonServices {
         return query.list();
     }
 
-    public static List<Kandidat> filterKandidat(String tahun, String parentId, String filterBy, String filter) {
-        Key<StringKey> dashKey = Key.create(StringKey.class, setParentId(tahun, parentId));
-        Query<Kandidat> query = ofy().load().type(Kandidat.class).ancestor(dashKey);
-        if (filterBy.length() > 0 && filter.length() > 0) {
-            query = query.filter(filterBy, filter);
-        }
-        return query.list();
-    }
-
     public static List<KandidatWilayah> filterKandidatWilayah(String tahun, String parentId, String filterBy, String filter) {
-        Key<StringKey> dashKey = Key.create(StringKey.class, setParentId(tahun, parentId));
+        Key<StringKey> dashKey = Key.create(StringKey.class, CommonServices.setParentId(tahun, parentId));
         Query<KandidatWilayah> query = ofy().load().type(KandidatWilayah.class).ancestor(dashKey);
         if (filterBy.length() > 0 && filter.length() > 0) {
             query = query.filter(filterBy, filter);
@@ -418,17 +507,8 @@ public class CommonServices {
         UserData userData = null;
         try {
             JSONObject user = (JSONObject) request.getSession().getAttribute("UserData");
-            if (user!=null && user.get("id").toString().length() > 0) {
-                Key<StringKey> thekey = Key.create(StringKey.class, user.get("id").toString());
-                List<UserData> users = ofy()
-                        .load()
-                        .type(UserData.class) // We want only Greetings
-                        .ancestor(thekey) // Anyone in this book
-                        .limit(1) // Only show 5 of them.
-                        .list();
-                if (!users.isEmpty()) {
-                    userData = users.get(0);
-                }
+            if (user != null && user.get("uid").toString().length() > 0) {
+                userData = ofy().load().type(UserData.class).id(user.get("uid").toString()).now();
             }
         } catch (Exception e) {
         }
@@ -453,12 +533,12 @@ public class CommonServices {
         return dashboard;
     }
 
-    public static void changeDashboardUser(Dashboard dashboard) {
+    public static int getuserSize() {
         QueryKeys<UserData> query = ofy()
                 .load()
                 .type(UserData.class).keys();
-        dashboard.users = query.list().size() + "";
-        ofy().save().entity(dashboard).now();
+        return query.list().size();
+
     }
 
     public static String getVal(Object u) {

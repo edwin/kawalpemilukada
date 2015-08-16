@@ -3,16 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/pages/wilayah.html</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/pages/user-profile.html</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/src/java/org/kawalpemilukada/web/controller/getData.java</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/dist/js/controllers.js</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/src/java/org/kawalpemilukada/model/Kandidat.java</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/dist/css/vendor.css</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/dist/js/app.js</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/src/java/org/kawalpemilukada/model/KandidatWilayah.java</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/src/java/org/kawalpemilukada/web/controller/kandidat.java</file>
-            <file>file:/C:/Java/work/learn/kawalpemilukada/web/pages/kandidat.html</file>
+            <file>file:/Users/khairulanshar/java/work/kawalpemilukada/web/dist/js/app.js</file>
+            <file>file:/Users/khairulanshar/java/work/kawalpemilukada/web/WEB-INF/appengine-web.xml</file>
+            <file>file:/Users/khairulanshar/java/work/kawalpemilukada/web/dist/css/vendor.css</file>
+            <file>file:/Users/khairulanshar/java/work/kawalpemilukada/web/pages/tabulasi.html</file>
+            <file>file:/Users/khairulanshar/java/work/kawalpemilukada/web/pages/user-profile.html</file>
         </group>
     </open-files>
 </project-private>

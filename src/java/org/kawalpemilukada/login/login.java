@@ -6,7 +6,6 @@
 package org.kawalpemilukada.login;
 
 import org.kawalpemilukada.web.controller.CommonServices;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
 import facebook4j.Facebook;
@@ -14,7 +13,6 @@ import facebook4j.FacebookFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -157,9 +155,7 @@ public class login extends HttpServlet {
                     ObjectifyService.ofy().save().entity(user).now();
                     Gson gson = new Gson();
                     record.put("user", JSONValue.parse(gson.toJson(user)));
-                } else {
-
-                }
+                } 
                 record.put("status", match + "");
                 record.put("matchs", matchs);
             } else {

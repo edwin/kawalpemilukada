@@ -6,32 +6,21 @@
 package org.kawalpemilukada.web.controller;
 
 //import com.google.common.reflect.TypeToken;
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.gson.Gson;
-import com.googlecode.objectify.Key;
 import static com.googlecode.objectify.ObjectifyService.ofy;
-import com.googlecode.objectify.cmd.Query;
-import com.googlecode.objectify.cmd.QueryKeys;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 //import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.kawalpemilukada.model.Dashboard;
-import org.kawalpemilukada.model.Pesan;
-import org.kawalpemilukada.model.StringKey;
 import org.kawalpemilukada.model.UserData;
-import org.kawalpemilukada.model.Wilayah;
 
 /**
  *
@@ -49,7 +38,7 @@ public class getModelData extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, ClassNotFoundException {
         String form_action = request.getParameter("form_action");
         if (form_action == null) {
             form_action = "";
@@ -76,11 +65,12 @@ public class getModelData extends HttpServlet {
                 return;
             }
             Dashboard dashboard = CommonServices.getDashboard(CommonServices.setParentId(tahun, "0"));
-            CommonServices.changeDashboardUser(dashboard);
+            dashboard.users = CommonServices.getuserSize() + "";
+            ofy().save().entity(dashboard).now();
             record.put("dashboard", JSONValue.parse(gson.toJson(dashboard)));
         }
         if (form_action.equalsIgnoreCase("updateUser")) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String line = null;
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null) {
@@ -89,8 +79,8 @@ public class getModelData extends HttpServlet {
             JSONObject input = (JSONObject) JSONValue.parse(sb.toString());
             try {
                 UserData user = CommonServices.getUser(request);
-                if (user.id.length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
-                    if (input.get("id").toString().equalsIgnoreCase(user.id)) {
+                if (user.uid.toString().length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
+                    if (input.get("id").toString().equalsIgnoreCase(user.uid.toString())) {
                         if (input.get("kabkota").toString().length() > 0) {
                             user.kabkota = input.get("kabkota").toString();
                             user.kabkotaId = input.get("kabkotaId").toString();
@@ -127,165 +117,6 @@ public class getModelData extends HttpServlet {
             } catch (Exception e) {
             }
         }
-        
-        if (form_action.equalsIgnoreCase("setPesan")) {
-            record.put("pesan", false);
-            record.put("parentPesan", false);
-            record.put("tanggapanPesan", false);
-            record.put("setujuPesan", false);
-            record.put("tidakSetujuPesan", false);
-            record.put("parentId", "");
-            StringBuffer sb = new StringBuffer();
-            String line = null;
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            JSONArray input = (JSONArray) JSONValue.parse(sb.toString());
-            try {
-                UserData user = CommonServices.getUser(request);
-                if (user.id.length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
-                    String key = input.get(0).toString();
-                    if (key.equalsIgnoreCase("Pesan Untuk Semua")) {
-                        key = "wall";
-                    } else if (key.equalsIgnoreCase("Pesan Untuk Saya")) {
-                        key = "msg" + user.id;
-                    }
-                    Pesan pesan = new Pesan(key);
-                    pesan.dari_id = user.id;
-                    if (key.contains("#setuju#")) {
-                        pesan.id = user.uid;//Long.parseLong(user.id.replace(user.type, ""));
-                        pesan.setujutidaksetuju = input.get(5).toString();
-                    } else {
-                        CommonServices.addPoinToUser(user, 10);
-                        record.put("user", JSONValue.parse(gson.toJson(user)));
-                    }
-                    pesan.dari_nama = user.nama;
-                    pesan.dari_img = user.imgurl;
-                    pesan.dari_link = user.link;
-                    pesan.untuk_id = input.get(1).toString();
-                    pesan.untuk_nama = input.get(2).toString();
-                    pesan.untuk_img = input.get(3).toString();
-                    pesan.untuk_link = input.get(4).toString();
-                    pesan.msg = input.get(5).toString();
-                    pesan.icon = input.get(6).toString();
-                    String cursorStr = input.get(7).toString();
-                    int limit = Integer.parseInt(input.get(8).toString());
-                    if (limit > 50) {
-                        limit = 50;
-                    }
-                    int offset = Integer.parseInt(input.get(9).toString());
-                    if (offset < 0) {
-                        offset = 0;
-                    }
-                    String parentId = input.get(10).toString();
-                    String parentKeyString = input.get(11).toString();
-                    JSONArray jsonArrays = (JSONArray) input.get(12);
-                    List<String> files = new ArrayList<>();
-                    for (Object jsonArray1 : jsonArrays) {
-                        files.add(JSONValue.toJSONString(((JSONArray) jsonArray1)));
-                    }
-                    pesan.files = files;
-                    ofy().save().entity(pesan).now();
-                    record.put("parentId", parentId);
-
-                    if (input.get(0).toString().equalsIgnoreCase("Pesan Untuk Semua")) {
-                        record.put("pesan", JSONValue.parse(gson.toJson(pesan)));
-                    } else if (input.get(0).toString().equalsIgnoreCase("Pesan Untuk Saya")) {
-                        record.put("pesan", JSONValue.parse(gson.toJson(pesan)));
-                    } else {
-
-                        Key<StringKey> parentKey = Key.create(StringKey.class, parentKeyString);
-                        Key<Pesan> keyWithParent = Key.create(parentKey, Pesan.class, Long.parseLong(parentId));
-                        Pesan parentPesan = ofy().load().type(Pesan.class).ancestor(keyWithParent).first().now();
-                        if (key.contains("#tanggapan#")) {
-                            QueryKeys<Pesan> childPesan = ofy().load().type(Pesan.class).ancestor(pesan.key).keys();
-                            parentPesan.jumlahTanggapan = childPesan.list().size();
-                            record.put("tanggapanPesan", JSONValue.parse(gson.toJson(pesan)));
-                        }
-                        if (key.contains("#setuju#")) {
-                            Query<Pesan> childPesan = ofy().load().type(Pesan.class).ancestor(pesan.key).filter("setujutidaksetuju", "Setuju");
-                            parentPesan.jumlahSetuju = childPesan.keys().list().size();
-                            record.put("setujuPesans", JSONValue.parse(gson.toJson(childPesan.offset(offset).limit(limit).list())));
-                            childPesan = ofy().load().type(Pesan.class).ancestor(pesan.key).filter("setujutidaksetuju", "Tidak Setuju");
-                            parentPesan.jumlahTidakSetuju = childPesan.keys().list().size();
-                            record.put("tidakSetujuPesans", JSONValue.parse(gson.toJson(childPesan.offset(offset).limit(limit).list())));
-                        }
-                        ofy().save().entity(parentPesan).now();
-                        record.put("parentPesan", JSONValue.parse(gson.toJson(parentPesan)));
-                    }
-
-                }
-            } catch (Exception e) {
-            }
-        }
-
-        if (form_action.equalsIgnoreCase("getPesan")) {
-            record.put("pesans", new JSONArray());
-            record.put("tanggapanPesans", new JSONArray());
-            record.put("setujuPesans", new JSONArray());
-            record.put("tidakSetujuPesans", new JSONArray());
-            record.put("cursorStr", "");
-            StringBuffer sb = new StringBuffer();
-            String line = null;
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            JSONArray input = (JSONArray) JSONValue.parse(sb.toString());
-            try {
-                String key = input.get(0).toString();
-                if (key.equalsIgnoreCase("Pesan Untuk Semua")) {
-                    key = "wall";
-                } else if (key.equalsIgnoreCase("Pesan Untuk Saya")) {
-                    try {
-                        UserData user = CommonServices.getUser(request);
-                        key = "msg" + user.id;
-                    } catch (Exception e) {
-                        key = "wall";
-                    }
-                }
-                String filter = input.get(1).toString();
-                String filterBy = input.get(2).toString();
-                String cursorStr = input.get(3).toString();
-                int limit = Integer.parseInt(input.get(4).toString());
-                if (limit > 50) {
-                    limit = 50;
-                }
-                int offset = Integer.parseInt(input.get(5).toString());
-                if (offset < 0) {
-                    offset = 0;
-                }
-                Query<Pesan> pesan = CommonServices.getPesan(key, filter, filterBy, cursorStr, offset, limit);
-                //record.put("cursorStr", query.iterator().getCursor().toWebSafeString());
-                record.put("cursorStr", "");
-                if (input.get(0).toString().equalsIgnoreCase("Pesan Untuk Semua")) {
-                    record.put("pesans", JSONValue.parse(gson.toJson(pesan.list())));
-                } else if (input.get(0).toString().equalsIgnoreCase("Pesan Untuk Saya")) {
-                    record.put("pesans", JSONValue.parse(gson.toJson(pesan.list())));
-                } else if (input.get(0).toString().contains("#tanggapan#")) {
-                    record.put("tanggapanPesans", JSONValue.parse(gson.toJson(pesan.list())));
-                } else if (input.get(0).toString().contains("#setuju#")) {
-                    if (filter.equalsIgnoreCase("Setuju")) {
-                        record.put("setujuPesans", JSONValue.parse(gson.toJson(pesan.list())));
-                    } else {
-                        record.put("tidakSetujuPesans", JSONValue.parse(gson.toJson(pesan.list())));
-                    }
-                }
-
-            } catch (Exception e) {
-            }
-        }
-        if (form_action.equalsIgnoreCase("getUrlFile")) {
-            record.put("uploadurl", "");
-            try {
-                BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-                String uploadurl = blobstoreService.createUploadUrl("/upload");
-                record.put("uploadurl", uploadurl);
-            } catch (Exception e) {
-            }
-        }
-
         out.print(JSONValue.toJSONString(record));
         out.flush();
     }
@@ -302,7 +133,11 @@ public class getModelData extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            //Logger.getLogger(getModelData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -316,7 +151,11 @@ public class getModelData extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (ClassNotFoundException ex) {
+            //Logger.getLogger(getModelData.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

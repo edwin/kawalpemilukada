@@ -8,7 +8,6 @@ package org.kawalpemilukada.model;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
-import com.googlecode.objectify.annotation.Parent;
 import com.googlecode.objectify.Key;
 import java.text.ParseException;
 import java.util.Date;
@@ -17,9 +16,7 @@ import org.kawalpemilukada.web.controller.CommonServices;
 @Entity
 public class UserData {
 
-    @Parent public Key<StringKey> key;
-    @Id public Long uid;
-    @Index public String id;
+    @Id public String uid;
     public String imgurl = "";
     public String nama = "";
     public String link = "";
@@ -48,10 +45,9 @@ public class UserData {
         this.userlevel = 0;
     }
 
-    public UserData(String id) throws ParseException {
+    public UserData(String uid) throws ParseException {
         this();
-        this.id = id;
-        this.key = Key.create(StringKey.class, id);
+        this.uid = uid;
     }
 
 }

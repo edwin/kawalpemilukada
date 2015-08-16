@@ -6,7 +6,6 @@
 package org.kawalpemilukada.login;
 
 import org.kawalpemilukada.web.controller.CommonServices;
-//import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.googlecode.objectify.Key;
 import static com.googlecode.objectify.ObjectifyService.ofy;
@@ -21,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONValue;
 import org.kawalpemilukada.model.Dashboard;
-import org.kawalpemilukada.model.StringKey;
 import org.kawalpemilukada.model.UserData;
 
 /**
@@ -57,14 +55,8 @@ public class callbackfb extends HttpServlet {
         request.getSession().removeAttribute("tahun");
         try {
             facebook4j.User u = facebook.getMe();
-            Key<StringKey> thekey = Key.create(StringKey.class, "fb" + CommonServices.getVal(u.getId()));
-            List<UserData> users = ofy()
-                    .load()
-                    .type(UserData.class) // We want only Greetings
-                    .ancestor(thekey) // Anyone in this book
-                    .limit(1) // Only show 5 of them.
-                    .list();
-            if (users.isEmpty()) {
+            user = ofy().load().type(UserData.class).id("fb" + CommonServices.getVal(u.getId())).now();
+            if (user==null) {
                 user = new UserData("fb" + CommonServices.getVal(u.getId()));
                 user.imgurl = "https://graph.facebook.com/" + u.getId() + "/picture";
                 user.nama = CommonServices.getVal(u.getName());
@@ -72,9 +64,9 @@ public class callbackfb extends HttpServlet {
                 user.email = CommonServices.getVal(u.getEmail());
                 user.type = "fb";
                 ofy().save().entity(user).now();
-                CommonServices.changeDashboardUser(dashboard);
+                dashboard.users = CommonServices.getuserSize() + "";
+                ofy().save().entity(dashboard).now();
             } else {
-                user = users.get(0);
                 if (user.type.equalsIgnoreCase("fb") && user.nama.equalsIgnoreCase(CommonServices.getVal(u.getName()))) {
                     user.lastlogin = CommonServices.JakartaTime();
                     user.type = "fb";

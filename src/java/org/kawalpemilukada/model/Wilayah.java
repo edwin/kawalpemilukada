@@ -22,11 +22,19 @@ public class Wilayah {
     @Index public String kpuid;
     @Index public String nama;
     @Index public String tingkat;
+    @Index public String tahun;
+    public int jumlahTPS;
+    public String sudahDisetup1;
+    public String sudahDisetup2;
+
 
     public Wilayah() {
+        this.sudahDisetup1="N";
+        this.sudahDisetup2="N";
     }
-    public Wilayah(String id) {
+    public Wilayah(String id,String tahun) {
         this();
+        this.tahun=tahun;
         this.key = Key.create(StringKey.class, id + "");
     }
 }

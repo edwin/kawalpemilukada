@@ -14,6 +14,5 @@ import com.googlecode.objectify.annotation.Id;
  */
 @Entity
 public class StringKey {
-
     @Id public String version;
 }

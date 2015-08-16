@@ -2,7 +2,7 @@
 <project default="-deploy-ant" basedir=".">
 
     <!-- Google App Engine Properties -->
-    <property name="appengine.location" value="C:\Java\appengine-java-sdk-1.9.21"/>
+    <property name="appengine.location" value="/Users/khairulanshar/java/appengine-java-sdk-1.9.23"/>
     <property name="appengine.http.port" value="8080"/>
     <property name="appengine.debug.port" value="8765"/>
     <property name="appengine.manager.uri" value="deployer:appengine:localhost:8080/-1198750328"/>

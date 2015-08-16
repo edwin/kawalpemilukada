@@ -12,11 +12,40 @@ body {
     margin-left: 0px;
     margin-right: 0px;
 }
+.menuclass{
+    display: none;
+}
+
+.navbar-brand{
+    float:none;
+    color:white;
+}
+.navbar-brand:hover,.navbar-brand:focus,.navbar-default .navbar-brand:hover,.navbar-default .navbar-brand:focus{
+    color:white;
+}
+.navbar-brand-div{
+    display: inline-block;
+    padding:15px 0px;
+    color:white;
+}
 
 a {
     word-wrap: break-word;
 }
+th{
+    text-transform: capitalize;
+    vertical-align: middle;
+}
+.number{
+    text-align: right;
+}
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none; 
+    margin: 0; 
+}
+input[type=number] {-moz-appearance: textfield;}
 .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-xs-1, .col-xs-10, .col-xs-11, .col-xs-12, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6, .col-xs-7, .col-xs-8, .col-xs-9{
     padding-left: 5px;
     padding-right: 5px;
@@ -214,6 +243,22 @@ a {
     color: #428bca;
 }
 
+.btn-blue{
+    background-color: rgba(0, 122, 255, 0.8);
+    border-color: rgba(0, 122, 255,0.9);
+    color: white;    
+}
+
+.btn-blue:hover,.btn-blue:focus {
+    background-color: rgba(0, 122, 255, 0.9);
+    border-color: rgba(0, 122, 255,1);
+    color: white;
+}
+
+.btn-blue.btn-outline {
+    color: white;
+}
+
 .btn-success.btn-outline {
     color: #5cb85c;
 }
@@ -234,7 +279,14 @@ a {
 .btn-success.btn-outline:hover,
 .btn-info.btn-outline:hover,
 .btn-warning.btn-outline:hover,
-.btn-danger.btn-outline:hover {
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover ,
+.btn-primary.btn-outline:focus,
+.btn-success.btn-outline:focus,
+.btn-info.btn-outline:focus,
+.btn-warning.btn-outline:focus,
+.btn-warning.btn-outline:focus,
+.btn-danger.btn-outline:focus {
     color: #fff;
 }
 
@@ -249,8 +301,23 @@ a {
     padding-bottom: 5px;
     border-bottom: 1px solid #eee;
 }
+.panel-black1 a.myLink,.panel-black1 a.myLink:hover{
+    color: rgba(0,122,255,1);
+}
 
-
+.td_right{
+    text-align: right;
+    vertical-align: top;
+}
+.td_right2,.table>tbody>tr>td.td_right2{
+    vertical-align: middle;
+    text-align: right;
+    min-width: 200px;
+    text-align: center;
+}
+.small{
+    font-size: 6pt;
+}
 .chat li.left .chat-body {
     /* margin-left: 60px;*/
 }
@@ -319,6 +386,10 @@ table.dataTable thead .sorting:after {
     color: rgba(50,50,50,.5);
 }
 
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 5px;
+}
+
 .btn-circle {
     width: 30px;
     height: 30px;
@@ -359,7 +430,7 @@ table.dataTable thead .sorting:after {
 }
 
 .huge {
-    font-size: 40px;
+    font-size: 26pt;
 }
 
 .panel-green {
@@ -587,19 +658,9 @@ table.dataTable thead .sorting:after {
 .dropdown-display {
 
 }
-.dropdown-display-inverse div{
-    border: 1px solid white;
-    padding: 8px;
-    min-height: 34px;
-    border-radius:4px;
-    text-decoration: none;
-    font-size: 14px;
-    color: white;
-    cursor: pointer;
-    display: inline-block;
-}
 
-.dropdown-display div {
+
+.dropdown-display div, .dropdown-display-inverse div {
     border: 1px solid #ccc;
     padding: 8px;
     min-height: 34px;
@@ -611,6 +672,13 @@ table.dataTable thead .sorting:after {
     cursor: pointer;
 }
 
+.dropdown-display-inverse div{
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    width:auto;
+}
 .dropdown-display div span,.dropdown-display-inverse div span {
     text-align: left;
 }
@@ -618,37 +686,66 @@ table.dataTable thead .sorting:after {
     float:right;
     margin-top: 3px;
 }
-
-.dropdown-display-inverse ul{
+.dropdown-display ul,.dropdown-display-inverse ul{
     padding: 0px;
     z-index: 2000;
 }
 .dropdown-display ul{
-    padding: 0px;
-    z-index: 2000;
     width: 100%;
 }
-.dropdown-display ul li a,.dropdown-display-inverse ul li a, .dropdown-display ul div li {
-    padding: 15px;
+.dropdown-menu div label{
+    position: absolute;
+    left: 20px;
+    z-index: 1;
+    color: #555;
+    padding-top:8px;
+    font-size: 16px;
+}
+.dropdown-menu div input{
     text-decoration: none;
-    font-size: 14px;
+    font-size: 16px;
     color: #555;
     word-wrap: break-word;
     white-space:normal;
+    padding: 5px;
+    border: 1px solid #555;
+    box-shadow: none;
+    transition: none;
+    width:100%;
+    position: relative;
+    padding-left: 30px;
+    border-radius: 4px;
 }
-.dropdown-display ul li a:hover,.dropdown-display-inverse ul li a:hover,.dropdown-display ul div li:hover{
+.dropdown-display ul li a,.dropdown-display-inverse ul li a, .dropdown-display ul div li, .dropdown-display-inverse ul div li {
+    padding: 15px;
+    text-decoration: none;
+    font-size: 14px;
+    word-wrap: break-word;
+    white-space:normal;
+    border:0px;
+    color: #555;
+}
+.dropdown-display ul div li:hover, .dropdown-display-inverse ul div li:hover{
     background-color: rgba(255,19,0,1);
-    color:white;
-    border-radius:4px;
+    border-radius:4px; 
+    color:white;   
 }
-
-.dropdown-display ul div{
+.dropdown-display ul li:hover a, .dropdown-display-inverse ul li:hover a, .dropdown-display ul div li:hover a, .dropdown-display-inverse ul div li:hover a{
+    color:white;  
+    background-color: rgba(255,19,0,1);
+    border-radius:4px; 
+}
+.dropdown-display-inverse ul div, .dropdown-display ul div{
     max-height: 300px;
     overflow-y: auto;
     padding: 2px;
 }
 
-
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
 
 .panel-black1 {
     border-color: rgba(0,0,0,0.9);
@@ -688,14 +785,33 @@ table.dataTable thead .sorting:after {
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
 }
+.divtd{
 
-
+}
+.divtd:last-child{
+    color:#666;
+    font-size: 8pt;
+}
+.tr-red{
+    color:rgba(0,122,255,1);
+}
 .tr-pointer{
     cursor: pointer;
     color:rgba(0,122,255,1);
 }
-.table-striped>tbody>.tr-pointer:hover, .panel-black .panel-heading div:hover, .panel-black .panel-footer div:hover{
-    background-color: rgba(255,19,0,1);
+.div-img:hover>a,.table-striped>tbody>.tr-red:hover, .table-striped>tbody>.tr-pointer:hover, .table-striped>tbody>.tr-pointer:hover .divtd,.table-striped>tbody>.tr-pointer:hover a,.panel-black .panel-heading div:hover, .panel-black .panel-footer div:hover{
+    background-color: rgb(51, 122, 183);/*rgb(0, 122, 255);/*#FF69B4;/*rgba(255,19,0,1);*/
+    color:white;
+}
+.div-img{
+    position: relative;
+    right: 16px;
+    top:6px;
+}
+.div-img a{
+    padding:8px;
+    border-radius: 50%;
+    background-color: rgba(51, 122, 183,0.3);/*rgb(0, 122, 255);/*#FF69B4;/*rgba(255,19,0,1);*/
     color:white;
 }
 .panel-black  nav{
@@ -717,7 +833,7 @@ table.dataTable thead .sorting:after {
 .heading-content{
     padding:15px;
 }
-#map { height: 380px; margin-bottom: 20px;background-color: white;border:1px solid #222;}
+#map { height: 300px; margin-bottom: 20px;background-color: white;border:1px solid #222;}
 
 .signed{
     padding-top:20px;
@@ -778,6 +894,21 @@ table.dataTable thead .sorting:after {
     resize: none;
 }
 
+.attach-foto{
+    border-radius: 50%;
+    height: 200px;
+    width: 200px;
+    border:3px solid rgba(0,122,255,0.9);
+}
+
+.attach-foto1{
+    border-radius: 50%;
+    height: 52px;
+    width: 52px;
+    border:3px solid rgba(0,122,255,0.9);
+    background-color: white;
+}
+
 
 .panel-footer .input label{
     padding: 0px;
@@ -806,6 +937,12 @@ table.dataTable thead .sorting:after {
     }
 
 }
+#menuBtn{
+    margin:0px;
+    margin-top:-7px;
+    float:none;
+    margin-left:20px;
+}
 @media(max-width:768px) {
     .navbar-top-links .dropdown-menu{
         width:100%;
@@ -814,6 +951,9 @@ table.dataTable thead .sorting:after {
         left:0px;
         right: 0px;
         margin:auto;
+    }
+    #menuBtn{
+        display:none;
     }
 
 }
