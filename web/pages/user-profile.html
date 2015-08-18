@@ -42,12 +42,12 @@
                 <div class="form-group">
                     <label>Email: </label>
                     <input type="email" class="form-control" ng-model="user.email">
-                    (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin KawalPilkada.id</i></small>)
+                    (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin </i></small>)
                 </div>
                 <div class="form-group">
                     <label>No Kontak: </label>
                     <input class="form-control" ng-model="user.nokontak">
-                    (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin KawalPilkada.id</i></small>)
+                    (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin </i></small>)
                 </div>
             </div>
         </div>
@@ -60,13 +60,13 @@
                     (<small class="text-muted"><i>Poin Anda akan bertambah setiap kali anda bantu mengisi data dari TPS atau memverifikasi data dengan C1 milik KPU. 100 poin untuk satu TPS</i></small>)
                 </div> 
 
-                <div class="form-group">
+                <div class="form-group" ng-init="userProfileCtrl.setLevelDesc(user)">
                     <label>User Level: </label>
-                    <b>{{user.userlevel}}</b> (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin KawalPilkada.id</i></small>)
+                    <b>{{user.userlevel}}</b> (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin </i></small>)
                 </div>
                 <div class="form-group">
                     <label>Terakhir Kali Login: </label>
-                    {{user.lastlogin}} <b>WIB</b> (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin KawalPilkada.id</i></small>)
+                    {{user.lastlogin}} <b>WIB</b> (<small class="text-muted"><i>hanya bisa dilihat oleh Anda dan Admin </i></small>)
                 </div>
             </div>
         </div>

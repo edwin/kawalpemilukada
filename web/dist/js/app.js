@@ -1,4 +1,4 @@
-/*versi 1.19 16-8-2015*/
+/*versi 1.20 18-8-2015*/
 var $forwardHTTPS = true;
 (function() {
     var app = angular.module('KawalPemiluKaDaApp', ['controllers', 'mainfooter-directives', 'mainheader-directives', 'mainside-directives']);

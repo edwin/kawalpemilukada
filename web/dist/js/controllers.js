@@ -111,7 +111,7 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                                 dataSuara.errorAlerts = [];
                                 dataSuara.tps_file = [];
                                 context.initDivImg("HC" + id);
-                            })
+                            });
                         };
                     })(f);
                     reader.readAsDataURL(f);
@@ -175,8 +175,8 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
             };
             this.showTextBox = function(admin, user, dataSuara, attributeName, val, type) {
                 if (user.logged && dataSuara[attributeName] === val && user.terverifikasi === "Y") {
-                    if ((admin === "Y" && user.userlevel > 500) || admin === "N") {
-                        if ((user.type === 100 && type === 'HC') || (user.type === 100 && type === 'HC') || (user.userlevel > 500)) {
+                    if ((admin === "Y" && user.userlevel >= 500) || (admin === "N" && user.userlevel < 500)) {
+                        if ((user.userlevel === 100 && type === 'HC') || (user.userlevel === 200 && type !== 'HC') || (user.userlevel >= 500) ) {
                             return true;
                         } else {
                             return false;
@@ -275,8 +275,7 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                     dataSuara["showPhoto"] = true;
                     context.initDivImg("HC" + $index);
                 }
-
-            }
+            };
             this.init2 = function(tabulasiCtrl, dataSuara, urut, $index) {
                 if (dataSuara.dilock === "N") {
                     if (dataSuara.suaraKandidat[urut + ''].suaraVerifikasiC1 === 0) {
@@ -288,15 +287,15 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                         dataSuara.suaraKandidat[urut + ''].suaraTPS = '';
                     }
                 }
-            }
+            };
             $scope.$watch(function() {
                 return window.location.hash;
             }, function(value) {
                 context.getData();
             });
-            var desaSelected = {}
-            var desaSelectedPrev = {}
-            var desaSelectedNext = {}
+            var desaSelected = {};
+            var desaSelectedPrev = {};
+            var desaSelectedNext = {};
             this.setDesa = function(datadesa) {
                 try {
                     context.desaSelected = datadesa;
@@ -304,7 +303,7 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                     $KawalService.handleHash(hashs[0] + "/" + hashs[1] + "/" + hashs[2] + "/" + hashs[3] + "/" + hashs[4] + "/" + hashs[5] + "/" + datadesa.kpuid, $scope.$parent.$parent);
                 } catch (e) {
                 }
-            }
+            };
             this.setPrevandNext = function() {
                 angular.forEach(context.DataDesa, function(value, key) {
                     if (context.desaSelected.kpuid === value.kpuid) {
@@ -312,9 +311,12 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                         context.desaSelectedNext = context.DataDesa[key + 1];
                     }
                 });
-            }
-
+            };
             this.getData = function() {
+                if (window.location.hash.substr(window.location.hash.length - 1) === "/") {
+                    window.location.hash = window.location.hash.substr(0, window.location.hash.length - 1);
+                }
+                
                 var hashs = window.location.hash.substr(2).split("/");
                 if (hashs[0] !== "tabulasi.html") {
                     return;
@@ -328,7 +330,7 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
                 context.uruts = [];
                 context.controlWilayahs = [
                     {id: 1, kpuid: "0", nama: "Lihat Semua", tingkat: "Nasional", showdiv: false}
-                ]
+                ];
                 $KawalService.itemyangsedangdiproses.setTabulasi(true);
 
                 if (hashs.length > 3) {
@@ -931,6 +933,14 @@ var $kpuurl = "https://scanc1.kpu.go.id/viewp.php";
             this.searchWilayah2 = "";
             this.searchWilayah1 = "";
             this.searchWilayah0 = "";
+            var context=this;
+            this.setLevelDesc=function(user){
+                angular.forEach(context.userlevelSelection, function(selected, key) {
+                    if (user.userlevel===selected[0]){
+                         $scope.$parent.$parent.user.userlevelDesc = selected[1];
+                    }
+                });
+            }
             $('.dropdown-menu').click(function(event) {
                 var target = $(event.target);
                 if (target.is("input") || target.is("i") || target.is("label") || target.is("div")) {

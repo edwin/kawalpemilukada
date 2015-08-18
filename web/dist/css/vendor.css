@@ -5,8 +5,18 @@
  */
 
 body {
-    background-color: #f8f8f8;
+    background-color: #222;
     overflow-x: hidden;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -moz-font-feature-settings: 'liga', 'kern';
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .row{
     margin-left: 0px;
@@ -795,11 +805,19 @@ table.dataTable thead .sorting:after {
 .tr-red{
     color:rgba(0,122,255,1);
 }
+.tr-pointer-inverse,.tr-pointer-inverse .divtd{
+    background-color: rgb(51, 122, 183);/*rgb(0, 122, 255);/*#FF69B4;/*rgba(255,19,0,1);*/
+    color:white;
+}
 .tr-pointer{
     cursor: pointer;
     color:rgba(0,122,255,1);
 }
-.div-img:hover>a,.table-striped>tbody>.tr-red:hover, .table-striped>tbody>.tr-pointer:hover, .table-striped>tbody>.tr-pointer:hover .divtd,.table-striped>tbody>.tr-pointer:hover a,.panel-black .panel-heading div:hover, .panel-black .panel-footer div:hover{
+.tr-pointer2{
+    cursor: pointer;
+    color:rgba(0,122,255,1);
+}
+.div-img:hover>a,.table-striped>tbody>.tr-red:hover, .table-striped>tbody>.tr-pointer:hover, .table-striped>tbody>.tr-pointer:hover .divtd,.table-striped>tbody>.tr-pointer:hover a{
     background-color: rgb(51, 122, 183);/*rgb(0, 122, 255);/*#FF69B4;/*rgba(255,19,0,1);*/
     color:white;
 }
@@ -813,6 +831,12 @@ table.dataTable thead .sorting:after {
     border-radius: 50%;
     background-color: rgba(51, 122, 183,0.3);/*rgb(0, 122, 255);/*#FF69B4;/*rgba(255,19,0,1);*/
     color:white;
+}
+.panel-black .panel-heading.kandidat{
+    border: 1px solid;
+    border-color: #e5e6e9 #dfe0e4 #d0d1d5;
+    border-radius: 4px;
+    background-color: white;
 }
 .panel-black  nav{
     display: inline-block;

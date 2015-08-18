@@ -80,7 +80,7 @@ public class getModelData extends HttpServlet {
             try {
                 UserData user = CommonServices.getUser(request);
                 if (user.uid.toString().length() > 0 && user.terverifikasi.equalsIgnoreCase("Y")) {
-                    if (input.get("id").toString().equalsIgnoreCase(user.uid.toString())) {
+                    if (input.get("uid").toString().equalsIgnoreCase(user.uid.toString())) {
                         if (input.get("kabkota").toString().length() > 0) {
                             user.kabkota = input.get("kabkota").toString();
                             user.kabkotaId = input.get("kabkotaId").toString();
@@ -115,6 +115,7 @@ public class getModelData extends HttpServlet {
                     }
                 }
             } catch (Exception e) {
+                record.put("errormsg", e.toString());
             }
         }
         out.print(JSONValue.toJSONString(record));
